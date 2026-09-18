@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+.netlify/
+
+# Env — ne jamais committer de secrets
+.env
+.env.*
+!.env.example
+
+# Firebase
+.firebase/
+firebase-debug.log
+serviceAccountKey.json
+
+# Divers
+*.log
+.DS_Store
