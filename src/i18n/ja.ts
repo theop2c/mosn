@@ -60,6 +60,10 @@ export const ja: Labels = {
     failed: "投稿に失敗しました",
     uploadHint:
       "アップロードに失敗する場合は、Firebase Storage が有効（Blaze プラン）でルールが公開済みか確認してください。",
+    imagesHint: "PNG または JPEG · 最大 5 MB · 1投稿につき3枚まで",
+    imageBadType: "対応していない形式です（PNG または JPEG のみ）。",
+    imageTooLarge: (name: string) => `${name} は 5 MB を超えています。`,
+    imageTooMany: "1つの投稿につき画像は3枚までです。",
   },
   post: {
     confirmDelete: "この投稿を削除しますか？",

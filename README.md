@@ -50,9 +50,13 @@ pour une petite communauté).
 - **Messages privés** (DM) : conversations temps réel entre deux
   utilisateurs, liste des conversations triée par activité
 - Signalement de contenus (`/api/report`)
+- **Smileys dans les posts** : sélecteur d'emojis intégré au composer
+  (insertion au curseur, aucune dépendance externe)
 - **Hébergement d'images optionnel** (Firebase Storage, plan Blaze) :
   activable par un admin pendant l'installation ou depuis
-  `/admin/settings`, sans redéploiement — images jointes aux posts
+  `/admin/settings`, sans redéploiement — jusqu'à **3 images par post**
+  (PNG/JPEG, 5 Mo max chacune, validées côté client et par les règles
+  Storage)
 - **Invitations par email** : l'admin saisit une adresse, Firebase envoie
   lui-même le lien (gratuit, aucun service d'emailing tiers) ; l'invité
   clique, est connecté automatiquement, choisit son nom et crée son mot de

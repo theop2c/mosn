@@ -59,6 +59,10 @@ export const en: Labels = {
     failed: "Failed to post",
     uploadHint:
       "if the upload fails, check that Firebase Storage is enabled (Blaze plan) and its rules are published.",
+    imagesHint: "PNG or JPEG · 5 MB max · 3 images per post",
+    imageBadType: "Unsupported format (PNG or JPEG only).",
+    imageTooLarge: (name: string) => `${name} exceeds 5 MB.`,
+    imageTooMany: "3 images maximum per post.",
   },
   post: {
     confirmDelete: "Delete this post?",

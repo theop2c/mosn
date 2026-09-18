@@ -117,6 +117,9 @@ service cloud.firestore {
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 2000
+        && (!("imageUrls" in request.resource.data)
+            || (request.resource.data.imageUrls is list
+                && request.resource.data.imageUrls.size() <= 3))
         && (request.resource.data.groupId == null
             || isGroupMember(request.resource.data.groupId));
       allow update, delete: if isAdmin()

@@ -197,6 +197,112 @@ button.danger:not(.link) {
   margin-bottom: 0.6rem;
 }
 
+.post-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.post-images img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: var(--radius);
+}
+
+/* ── Barre d'outils du composer ───────────────────────────────────── */
+.composer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.composer-submit {
+  margin-left: auto;
+}
+
+.emoji-toggle,
+.file-button {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.3rem 0.55rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.file-button input[type="file"] {
+  display: none;
+}
+
+.emoji-picker {
+  position: relative;
+}
+
+.emoji-panel {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 0.15rem;
+  padding: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  width: min(320px, 80vw);
+}
+
+.emoji-panel button {
+  background: none;
+  border: none;
+  padding: 0.15rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.emoji-panel button:hover {
+  background: var(--bg);
+}
+
+.image-previews {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.image-preview {
+  position: relative;
+}
+
+.image-preview img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.image-preview button {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
 .toggle {
   display: flex !important;
   flex-direction: row !important;

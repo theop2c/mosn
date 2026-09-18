@@ -59,6 +59,10 @@ export const zh: Labels = {
     failed: "发布失败",
     uploadHint:
       "如果上传失败，请确认 Firebase Storage 已启用（Blaze 套餐）且规则已发布。",
+    imagesHint: "PNG 或 JPEG · 单张最大 5 MB · 每帖最多 3 张",
+    imageBadType: "不支持的格式（仅限 PNG 或 JPEG）。",
+    imageTooLarge: (name: string) => `${name} 超过 5 MB。`,
+    imageTooMany: "每帖最多 3 张图片。",
   },
   post: {
     confirmDelete: "删除这条帖子？",

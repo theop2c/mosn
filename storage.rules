@@ -5,13 +5,13 @@ rules_version = '2';
 // À publier via la console Firebase : Storage → onglet Règles.
 service firebase.storage {
   match /b/{bucket}/o {
-    // Images de posts : posts/{uid}/{fichier}
+    // Images de posts : posts/{uid}/{fichier} — PNG/JPEG, 5 Mo max
     match /posts/{uid}/{fileName} {
       allow read: if true;
       allow write: if request.auth != null
         && request.auth.uid == uid
         && request.resource.size < 5 * 1024 * 1024
-        && request.resource.contentType.matches('image/.*');
+        && request.resource.contentType.matches('image/(png|jpeg)');
       allow delete: if request.auth != null
         && (request.auth.uid == uid || request.auth.token.admin == true);
     }

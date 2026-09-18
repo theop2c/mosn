@@ -16,6 +16,8 @@ export interface Post {
   authorName: string;
   text: string;
   groupId?: string | null;
+  /** Jusqu'à 3 images PNG/JPEG (imageUrl : ancien champ, un seul visuel). */
+  imageUrls?: string[];
   imageUrl?: string | null;
   createdAt?: Timestamp;
 }

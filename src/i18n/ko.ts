@@ -60,6 +60,10 @@ export const ko: Labels = {
     failed: "게시 실패",
     uploadHint:
       "업로드가 실패하면 Firebase Storage가 활성화되어 있는지(Blaze 요금제) 그리고 규칙이 게시되었는지 확인하세요.",
+    imagesHint: "PNG 또는 JPEG · 최대 5 MB · 게시물당 3장까지",
+    imageBadType: "지원되지 않는 형식입니다 (PNG 또는 JPEG만 가능).",
+    imageTooLarge: (name: string) => `${name}이(가) 5 MB를 초과합니다.`,
+    imageTooMany: "게시물당 이미지는 최대 3장입니다.",
   },
   post: {
     confirmDelete: "이 게시물을 삭제할까요?",

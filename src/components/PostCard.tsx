@@ -40,9 +40,18 @@ export function PostCard({ post }: { post: Post }) {
         <time>{date}</time>
       </header>
       <p className="post-text">{post.text}</p>
-      {post.imageUrl && (
-        <img className="post-image" src={post.imageUrl} alt="" loading="lazy" />
-      )}
+      {(() => {
+        const images =
+          post.imageUrls ?? (post.imageUrl ? [post.imageUrl] : []);
+        if (images.length === 0) return null;
+        return (
+          <div className="post-images">
+            {images.map((url) => (
+              <img key={url} src={url} alt="" loading="lazy" />
+            ))}
+          </div>
+        );
+      })()}
       <footer className="post-actions">
         {(isOwner || isAdmin) && (
           <button className="link danger" onClick={handleDelete}>

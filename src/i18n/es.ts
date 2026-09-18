@@ -60,6 +60,10 @@ export const es: Labels = {
     failed: "Error al publicar",
     uploadHint:
       "si la subida falla, comprueba que Firebase Storage está activado (plan Blaze) y que sus reglas están publicadas.",
+    imagesHint: "PNG o JPEG · 5 MB máx. · 3 imágenes por publicación",
+    imageBadType: "Formato no admitido (solo PNG o JPEG).",
+    imageTooLarge: (name: string) => `${name} supera los 5 MB.`,
+    imageTooMany: "Máximo 3 imágenes por publicación.",
   },
   post: {
     confirmDelete: "¿Eliminar esta publicación?",

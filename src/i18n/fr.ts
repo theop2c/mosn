@@ -59,6 +59,10 @@ export const fr = {
     failed: "Échec de la publication",
     uploadHint:
       "si l'upload échoue, vérifiez que Firebase Storage est activé (plan Blaze) et que ses règles sont publiées.",
+    imagesHint: "PNG ou JPEG · 5 Mo max · 3 images par post",
+    imageBadType: "Format non accepté (PNG ou JPEG uniquement).",
+    imageTooLarge: (name: string) => `${name} dépasse 5 Mo.`,
+    imageTooMany: "3 images maximum par post.",
   },
   post: {
     confirmDelete: "Supprimer ce post ?",
