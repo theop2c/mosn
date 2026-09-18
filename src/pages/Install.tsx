@@ -21,6 +21,8 @@ export function Install() {
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [theme, setTheme] = useState(DEFAULT_THEME);
+  const [publicFeed, setPublicFeed] = useState(true);
+  const [pageSize, setPageSize] = useState(20);
   const [imagesEnabled, setImagesEnabled] = useState(false);
   const [snippet, setSnippet] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +58,8 @@ export function Install() {
         imagesEnabled,
         theme,
         language: uiLanguage,
+        publicFeed,
+        pageSize,
         config: values,
       }),
     );
@@ -189,6 +193,29 @@ export function Install() {
         <p className="hint">
           {t.install.language} : {LANGUAGES.find((l) => l.id === uiLanguage)?.label}
         </p>
+        <label>
+          {t.install.publicFeed}
+          <select
+            value={publicFeed ? "yes" : "no"}
+            onChange={(e) => setPublicFeed(e.target.value === "yes")}
+          >
+            <option value="yes">{t.common.yes}</option>
+            <option value="no">{t.common.no}</option>
+          </select>
+        </label>
+        <label>
+          {t.install.pagination}
+          <select
+            value={pageSize}
+            onChange={(e) => setPageSize(Number(e.target.value))}
+          >
+            {[10, 20, 50, 100].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="toggle">
           <input
             type="checkbox"

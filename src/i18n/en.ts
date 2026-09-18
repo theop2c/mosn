@@ -10,6 +10,8 @@ export const en: Labels = {
     user: "User",
     anonymous: "Anonymous",
     guest: "Guest",
+    yes: "Yes",
+    no: "No",
   },
   nav: {
     feed: "Feed",
@@ -52,6 +54,7 @@ export const en: Labels = {
     tabFollowing: "Following",
     emptyAll: "No posts yet.",
     emptyFollowing: "No posts from people you follow. Find users via search!",
+    signInToView: "Sign in to see the posts.",
   },
   composer: {
     publish: "Post",
@@ -70,6 +73,8 @@ export const en: Labels = {
     report: "Report",
     reported: "Reported ✓",
     reportReason: "Reason for reporting:",
+    commentPlaceholder: "Write a comment…",
+    noComments: "No comments yet. Start the conversation!",
   },
   follow: {
     follow: "Follow",
@@ -121,6 +126,15 @@ export const en: Labels = {
     postIn: (name: string) => `Post in ${name}…`,
     empty: "No posts in this group yet.",
     privateLocked: "🔒 Private group — content is restricted to members.",
+    tabPosts: "Posts",
+    tabInfo: "Info",
+    infoCreated: "Created on",
+    infoMembers: (n: number) => `${n} member${n === 1 ? "" : "s"}`,
+    infoAccess: "Access",
+    accessNote: "Group access cannot be changed after creation.",
+    inviteMembers: "Invite members",
+    add: "Add",
+    added: "Added ✓",
   },
   messages: {
     title: "Messages",
@@ -195,6 +209,10 @@ export const en: Labels = {
     languageTitle: "Language",
     languageHint:
       "The chosen language applies immediately to all visitors, without redeploying (one label file per language).",
+    publicFeedTitle: "Public post display",
+    publicFeedDesc: "Allow signed-out visitors to see the public feed.",
+    paginationTitle: "Pagination",
+    paginationDesc: "Number of posts loaded per page.",
     imagesTitle: "Image hosting (Firebase Storage)",
     imagesDesc: "Lets users attach an image to their posts.",
     blazeIntro:
@@ -222,6 +240,8 @@ export const en: Labels = {
     adminPasswordPlaceholder: "6 characters minimum",
     design: "Site design",
     language: "Site language",
+    publicFeed: "Show posts without being signed in?",
+    pagination: "Pagination (posts per page)",
     imagesToggle: "Enable image hosting (Firebase Storage)",
     imagesNotice:
       "⚠️ Firebase Storage requires the paid Blaze plan (pay-as-you-go): upgrade your project to Blaze, enable Storage in the Firebase console and publish the rules from the storage.rules file. Not ready? Leave it unchecked: an admin can enable it later from /admin/settings, without redeploying.",

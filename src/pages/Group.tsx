@@ -1,27 +1,37 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   collection,
   deleteDoc,
   doc,
+  endAt,
+  getCountFromServer,
+  getDocs,
   limit,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
   setDoc,
+  startAt,
   where,
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useAuth } from "../context/AuthContext";
+import { Avatar } from "../components/Avatar";
 import { PostCard } from "../components/PostCard";
 import { PostComposer } from "../components/PostComposer";
-import type { Group as GroupType, JoinRequest, Post } from "../types";
+import type {
+  Group as GroupType,
+  JoinRequest,
+  Post,
+  UserProfile,
+} from "../types";
 
 export function Group() {
   const { gid } = useParams<{ gid: string }>();
-  const { user, profile, t } = useAuth();
+  const { user, profile, settings, t } = useAuth();
   const navigate = useNavigate();
   const [group, setGroup] = useState<GroupType | null>(null);
   const [isMember, setIsMember] = useState(false);
@@ -29,6 +39,8 @@ export function Group() {
   const [requests, setRequests] = useState<JoinRequest[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState<"posts" | "info">("posts");
+  const [memberCount, setMemberCount] = useState<number | null>(null);
 
   const isOwner = user != null && group?.ownerId === user.uid;
   const canView = group != null && (group.visibility === "public" || isMember);
@@ -77,12 +89,19 @@ export function Group() {
       collection(db, "posts"),
       where("groupId", "==", gid),
       orderBy("createdAt", "desc"),
-      limit(50),
+      limit(settings.pageSize),
     );
     return onSnapshot(q, (snap) => {
       setPosts(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Post));
     });
-  }, [gid, canView]);
+  }, [gid, canView, settings.pageSize]);
+
+  useEffect(() => {
+    if (!gid) return;
+    void getCountFromServer(collection(db, "groups", gid, "members"))
+      .then((snap) => setMemberCount(snap.data().count))
+      .catch(() => setMemberCount(null));
+  }, [gid, isMember]);
 
   if (!group) return <p className="center">{t.group.notFound}</p>;
 
@@ -190,7 +209,42 @@ export function Group() {
         </div>
       )}
 
-      {canView ? (
+      <nav className="tabs">
+        <button
+          className={`link ${tab === "posts" ? "active" : ""}`}
+          onClick={() => setTab("posts")}
+        >
+          {t.group.tabPosts}
+        </button>
+        <button
+          className={`link ${tab === "info" ? "active" : ""}`}
+          onClick={() => setTab("info")}
+        >
+          {t.group.tabInfo}
+        </button>
+      </nav>
+
+      {tab === "info" ? (
+        <div className="card">
+          <p>
+            <strong>{t.group.infoCreated}</strong> :{" "}
+            {group.createdAt?.toDate().toLocaleDateString() ?? "—"}
+          </p>
+          <p>
+            <strong>{t.group.infoMembers(memberCount ?? 0)}</strong>
+          </p>
+          <p>
+            <strong>{t.group.infoAccess}</strong> :{" "}
+            <span className="badge">
+              {group.visibility === "public"
+                ? t.groups.badgePublic
+                : t.groups.badgePrivate}
+            </span>{" "}
+            <span className="hint">{t.group.accessNote}</span>
+          </p>
+          {isOwner && gid && <GroupInvite gid={gid} />}
+        </div>
+      ) : canView ? (
         <>
           {isMember && (
             <PostComposer
@@ -206,6 +260,84 @@ export function Group() {
       ) : (
         <p className="card">{t.group.privateLocked}</p>
       )}
+    </div>
+  );
+}
+
+/** Invitation de membres par le propriétaire : recherche par nom, ajout direct. */
+function GroupInvite({ gid }: { gid: string }) {
+  const { t } = useAuth();
+  const [term, setTerm] = useState("");
+  const [results, setResults] = useState<(UserProfile & { id: string })[]>([]);
+  const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSearch(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const needle = term.trim().toLowerCase();
+    if (!needle) return;
+    try {
+      const snap = await getDocs(
+        query(
+          collection(db, "users"),
+          orderBy("displayNameLower"),
+          startAt(needle),
+          endAt(needle + ""),
+          limit(10),
+        ),
+      );
+      setResults(
+        snap.docs.map((d) => ({ id: d.id, ...(d.data() as UserProfile) })),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.search.failed);
+    }
+  }
+
+  async function addMember(uid: string) {
+    setError(null);
+    try {
+      await setDoc(doc(db, "groups", gid, "members", uid), {
+        uid,
+        role: "member",
+        joinedAt: serverTimestamp(),
+      });
+      setAddedIds((prev) => new Set(prev).add(uid));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t.common.error);
+    }
+  }
+
+  return (
+    <div className="group-invite">
+      <h2>{t.group.inviteMembers}</h2>
+      <form className="search-form" onSubmit={handleSearch}>
+        <input
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          placeholder={t.search.placeholder}
+          required
+        />
+        <button type="submit">{t.search.submit}</button>
+      </form>
+      {error && <p className="error">{error}</p>}
+      {results.length === 0 && term && <p className="hint">{t.search.none}</p>}
+      {results.map((u) => (
+        <div className="row invite-row" key={u.id}>
+          <Link to={`/u/${u.id}`} className="post-author">
+            <Avatar name={u.displayName} uid={u.id} size={28} />
+            <span className="author">{u.displayName}</span>
+          </Link>
+          <button
+            className="secondary"
+            disabled={addedIds.has(u.id)}
+            onClick={() => addMember(u.id)}
+          >
+            {addedIds.has(u.id) ? t.group.added : t.group.add}
+          </button>
+        </div>
+      ))}
     </div>
   );
 }

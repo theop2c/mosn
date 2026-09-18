@@ -10,6 +10,8 @@ export const ja: Labels = {
     user: "ユーザー",
     anonymous: "匿名",
     guest: "ゲスト",
+    yes: "はい",
+    no: "いいえ",
   },
   nav: {
     feed: "フィード",
@@ -53,6 +55,7 @@ export const ja: Labels = {
     emptyAll: "まだ投稿がありません。",
     emptyFollowing:
       "フォロー中のユーザーの投稿はまだありません。検索でユーザーを見つけましょう！",
+    signInToView: "投稿を見るにはログインしてください。",
   },
   composer: {
     publish: "投稿",
@@ -71,6 +74,8 @@ export const ja: Labels = {
     report: "通報",
     reported: "通報済み ✓",
     reportReason: "通報の理由：",
+    commentPlaceholder: "コメントを書く…",
+    noComments: "まだコメントがありません。会話を始めましょう！",
   },
   follow: {
     follow: "フォロー",
@@ -122,6 +127,15 @@ export const ja: Labels = {
     postIn: (name: string) => `${name} に投稿…`,
     empty: "このグループにはまだ投稿がありません。",
     privateLocked: "🔒 非公開グループ — コンテンツはメンバー限定です。",
+    tabPosts: "投稿",
+    tabInfo: "情報",
+    infoCreated: "作成日",
+    infoMembers: (n: number) => `メンバー ${n} 人`,
+    infoAccess: "アクセス",
+    accessNote: "グループのアクセス設定は作成後に変更できません。",
+    inviteMembers: "メンバーを招待",
+    add: "追加",
+    added: "追加済み ✓",
   },
   messages: {
     title: "メッセージ",
@@ -196,6 +210,10 @@ export const ja: Labels = {
     languageTitle: "言語",
     languageHint:
       "選んだ言語は再デプロイなしで、すべての訪問者に即時適用されます（言語ごとに1つのラベルファイル）。",
+    publicFeedTitle: "投稿の公開表示",
+    publicFeedDesc: "ログインしていない訪問者にも公開フィードを表示します。",
+    paginationTitle: "ページネーション",
+    paginationDesc: "1ページに読み込む投稿数。",
     imagesTitle: "画像ホスティング（Firebase Storage）",
     imagesDesc: "ユーザーが投稿に画像を添付できるようになります。",
     blazeIntro:
@@ -223,6 +241,8 @@ export const ja: Labels = {
     adminPasswordPlaceholder: "6文字以上",
     design: "サイトのデザイン",
     language: "サイトの言語",
+    publicFeed: "ログインなしで投稿を表示しますか？",
+    pagination: "ページネーション（1ページの投稿数）",
     imagesToggle: "画像ホスティングを有効化（Firebase Storage）",
     imagesNotice:
       "⚠️ Firebase Storage には有料の Blaze プラン（従量課金）が必要です：プロジェクトを Blaze にアップグレードし、Firebase コンソールで Storage を有効化して storage.rules のルールを公開してください。まだの場合はチェックを外したままに：管理者が後から /admin/settings で再デプロイなしに有効化できます。",

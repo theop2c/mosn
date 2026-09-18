@@ -79,6 +79,22 @@ while (!LANGUAGE_IDS.includes(language)) {
     ).trim() || "fr";
 }
 
+const publicFeedAnswer = (
+  await rl.question("Afficher les posts sans être connecté ? (O/n) : ")
+)
+  .trim()
+  .toLowerCase();
+const publicFeed = publicFeedAnswer !== "n" && publicFeedAnswer !== "non";
+
+const PAGE_SIZES = ["10", "20", "50", "100"];
+let pageSize = "";
+while (!PAGE_SIZES.includes(pageSize)) {
+  pageSize =
+    (
+      await rl.question(`Pagination — posts par page (${PAGE_SIZES.join(" / ")}) [20] : `)
+    ).trim() || "20";
+}
+
 const imagesAnswer = (
   await rl.question(
     "Activer l'hébergement d'images (Firebase Storage, plan Blaze requis) ? (o/N) : ",
@@ -149,6 +165,8 @@ ADMIN_PASSWORD=${adminPassword}
 ENABLE_IMAGES=${imagesEnabled}
 SITE_THEME=${theme}
 SITE_LANGUAGE=${language}
+PUBLIC_FEED=${publicFeed}
+PAGE_SIZE=${pageSize}
 
 # ── Netlify Functions (secret serveur, à compléter à la main) ──────
 # Console Firebase → Paramètres → Comptes de service → Générer une clé

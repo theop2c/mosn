@@ -53,6 +53,8 @@ export function buildEnvFile(options: {
   imagesEnabled: boolean;
   theme: string;
   language: string;
+  publicFeed: boolean;
+  pageSize: number;
   config: FirebaseConfigValues;
 }): string {
   const {
@@ -63,6 +65,8 @@ export function buildEnvFile(options: {
     imagesEnabled,
     theme,
     language,
+    publicFeed,
+    pageSize,
     config,
   } = options;
   return [
@@ -91,6 +95,8 @@ export function buildEnvFile(options: {
     `ENABLE_IMAGES=${imagesEnabled}`,
     `SITE_THEME=${theme}`,
     `SITE_LANGUAGE=${language}`,
+    `PUBLIC_FEED=${publicFeed}`,
+    `PAGE_SIZE=${pageSize}`,
     "",
     "# ── Netlify Functions (secret serveur, à compléter à la main) ──────",
     "# Console Firebase → Paramètres → Comptes de service → Générer une clé",

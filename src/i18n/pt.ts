@@ -10,6 +10,8 @@ export const pt: Labels = {
     user: "Utilizador",
     anonymous: "Anónimo",
     guest: "Convidado",
+    yes: "Sim",
+    no: "Não",
   },
   nav: {
     feed: "Feed",
@@ -53,6 +55,7 @@ export const pt: Labels = {
     emptyAll: "Ainda não há publicações.",
     emptyFollowing:
       "Nenhuma publicação de quem segue. Encontre utilizadores na pesquisa!",
+    signInToView: "Entre para ver as publicações.",
   },
   composer: {
     publish: "Publicar",
@@ -71,6 +74,8 @@ export const pt: Labels = {
     report: "Denunciar",
     reported: "Denunciado ✓",
     reportReason: "Motivo da denúncia:",
+    commentPlaceholder: "Escrever um comentário…",
+    noComments: "Ainda não há comentários. Comece a conversa!",
   },
   follow: {
     follow: "Seguir",
@@ -124,6 +129,15 @@ export const pt: Labels = {
     postIn: (name: string) => `Publicar em ${name}…`,
     empty: "Ainda não há publicações neste grupo.",
     privateLocked: "🔒 Grupo privado — conteúdo reservado aos membros.",
+    tabPosts: "Publicações",
+    tabInfo: "Informações",
+    infoCreated: "Criado a",
+    infoMembers: (n: number) => `${n} membro${n === 1 ? "" : "s"}`,
+    infoAccess: "Acesso",
+    accessNote: "O acesso do grupo não pode ser alterado após a criação.",
+    inviteMembers: "Convidar membros",
+    add: "Adicionar",
+    added: "Adicionado ✓",
   },
   messages: {
     title: "Mensagens",
@@ -198,6 +212,11 @@ export const pt: Labels = {
     languageTitle: "Idioma",
     languageHint:
       "O idioma escolhido aplica-se imediatamente a todos os visitantes, sem novo deploy (um ficheiro de etiquetas por idioma).",
+    publicFeedTitle: "Visualização pública das publicações",
+    publicFeedDesc:
+      "Permitir que visitantes sem sessão vejam o feed público.",
+    paginationTitle: "Paginação",
+    paginationDesc: "Número de publicações carregadas por página.",
     imagesTitle: "Alojamento de imagens (Firebase Storage)",
     imagesDesc: "Permite aos utilizadores anexar uma imagem às publicações.",
     blazeIntro:
@@ -225,6 +244,8 @@ export const pt: Labels = {
     adminPasswordPlaceholder: "Mínimo de 6 caracteres",
     design: "Design do site",
     language: "Idioma do site",
+    publicFeed: "Mostrar as publicações sem iniciar sessão?",
+    pagination: "Paginação (publicações por página)",
     imagesToggle: "Ativar o alojamento de imagens (Firebase Storage)",
     imagesNotice:
       "⚠️ O Firebase Storage requer o plano pago Blaze (pagamento por uso): mude o projeto para Blaze, ative o Storage na consola Firebase e publique as regras do ficheiro storage.rules. Não está pronto? Deixe desmarcado: um admin poderá ativá-lo mais tarde em /admin/settings, sem novo deploy.",

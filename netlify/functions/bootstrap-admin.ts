@@ -60,10 +60,13 @@ export default safe(async (req: Request) => {
   // pas écraser un réglage modifié ensuite dans /admin/settings.
   const settingsRef = db.doc("settings/app");
   if (!(await settingsRef.get()).exists) {
+    const pageSize = Number(process.env.PAGE_SIZE);
     await settingsRef.set({
       imagesEnabled: process.env.ENABLE_IMAGES === "true",
       theme: process.env.SITE_THEME || "indigo",
       language: process.env.SITE_LANGUAGE || "fr",
+      publicFeed: process.env.PUBLIC_FEED !== "false",
+      pageSize: [10, 20, 50, 100].includes(pageSize) ? pageSize : 20,
     });
   }
 

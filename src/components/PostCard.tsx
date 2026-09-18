@@ -4,6 +4,9 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { api } from "../lib/api";
 import { useAuth } from "../context/AuthContext";
+import { Avatar } from "./Avatar";
+import { Comments } from "./Comments";
+import { Reactions } from "./Reactions";
 import type { Post } from "../types";
 
 export function PostCard({ post }: { post: Post }) {
@@ -12,6 +15,7 @@ export function PostCard({ post }: { post: Post }) {
 
   const isOwner = user?.uid === post.authorId;
   const date = post.createdAt?.toDate().toLocaleString() ?? "";
+  const images = post.imageUrls ?? (post.imageUrl ? [post.imageUrl] : []);
 
   async function handleDelete() {
     if (!confirm(t.post.confirmDelete)) return;
@@ -34,35 +38,41 @@ export function PostCard({ post }: { post: Post }) {
   return (
     <article className="card post">
       <header>
-        <Link to={`/u/${post.authorId}`} className="author">
-          {post.authorName}
+        <Link to={`/u/${post.authorId}`} className="post-author">
+          <Avatar name={post.authorName} uid={post.authorId} />
+          <span>
+            <span className="author">{post.authorName}</span>
+            <time>{date}</time>
+          </span>
         </Link>
-        <time>{date}</time>
+        <span className="post-menu">
+          {(isOwner || isAdmin) && (
+            <button className="link danger" onClick={handleDelete}>
+              {t.post.delete}
+            </button>
+          )}
+          {user && !isOwner && (
+            <button
+              className="link"
+              onClick={handleReport}
+              disabled={reported}
+            >
+              {reported ? t.post.reported : t.post.report}
+            </button>
+          )}
+        </span>
       </header>
       <p className="post-text">{post.text}</p>
-      {(() => {
-        const images =
-          post.imageUrls ?? (post.imageUrl ? [post.imageUrl] : []);
-        if (images.length === 0) return null;
-        return (
-          <div className="post-images">
-            {images.map((url) => (
-              <img key={url} src={url} alt="" loading="lazy" />
-            ))}
-          </div>
-        );
-      })()}
+      {images.length > 0 && (
+        <div className="post-images">
+          {images.map((url) => (
+            <img key={url} src={url} alt="" loading="lazy" />
+          ))}
+        </div>
+      )}
       <footer className="post-actions">
-        {(isOwner || isAdmin) && (
-          <button className="link danger" onClick={handleDelete}>
-            {t.post.delete}
-          </button>
-        )}
-        {user && !isOwner && (
-          <button className="link" onClick={handleReport} disabled={reported}>
-            {reported ? t.post.reported : t.post.report}
-          </button>
-        )}
+        <Reactions postId={post.id} />
+        <Comments postId={post.id} />
       </footer>
     </article>
   );

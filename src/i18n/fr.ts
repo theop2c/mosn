@@ -9,6 +9,8 @@ export const fr = {
     user: "Utilisateur",
     anonymous: "Anonyme",
     guest: "Invité",
+    yes: "Oui",
+    no: "Non",
   },
   nav: {
     feed: "Fil",
@@ -52,6 +54,7 @@ export const fr = {
     emptyAll: "Aucun post pour le moment.",
     emptyFollowing:
       "Aucun post de vos abonnements. Suivez des utilisateurs via la recherche !",
+    signInToView: "Connectez-vous pour voir les posts.",
   },
   composer: {
     publish: "Publier",
@@ -70,6 +73,8 @@ export const fr = {
     report: "Signaler",
     reported: "Signalé ✓",
     reportReason: "Raison du signalement :",
+    commentPlaceholder: "Écrire un commentaire…",
+    noComments: "Aucun commentaire. Lancez la discussion !",
   },
   follow: {
     follow: "Suivre",
@@ -121,6 +126,15 @@ export const fr = {
     postIn: (name: string) => `Publier dans ${name}…`,
     empty: "Aucun post dans ce groupe.",
     privateLocked: "🔒 Groupe privé — le contenu est réservé aux membres.",
+    tabPosts: "Posts",
+    tabInfo: "Infos",
+    infoCreated: "Créé le",
+    infoMembers: (n: number) => `${n} membre${n > 1 ? "s" : ""}`,
+    infoAccess: "Accès",
+    accessNote: "L'accès du groupe ne peut pas être modifié après création.",
+    inviteMembers: "Inviter des membres",
+    add: "Ajouter",
+    added: "Ajouté ✓",
   },
   messages: {
     title: "Messages",
@@ -195,6 +209,11 @@ export const fr = {
     languageTitle: "Langue",
     languageHint:
       "La langue choisie s'applique immédiatement à tous les visiteurs, sans redéploiement (un fichier de labels par langue).",
+    publicFeedTitle: "Affichage public des posts",
+    publicFeedDesc:
+      "Autoriser les visiteurs non connectés à voir le fil public.",
+    paginationTitle: "Pagination",
+    paginationDesc: "Nombre de posts chargés par page.",
     imagesTitle: "Hébergement d'images (Firebase Storage)",
     imagesDesc: "Permet aux utilisateurs de joindre une image à leurs posts.",
     blazeIntro:
@@ -222,6 +241,8 @@ export const fr = {
     adminPasswordPlaceholder: "6 caractères minimum",
     design: "Design du site",
     language: "Langue du site",
+    publicFeed: "Afficher les posts sans être connecté ?",
+    pagination: "Pagination (posts par page)",
     imagesToggle: "Activer l'hébergement d'images (Firebase Storage)",
     imagesNotice:
       "⚠️ Firebase Storage nécessite le forfait payant Blaze (facturation à l'usage) : passez votre projet en Blaze, activez Storage dans la console Firebase et publiez les règles du fichier storage.rules. Pas prêt ? Laissez décoché : un admin pourra l'activer plus tard depuis /admin/settings, sans redéploiement.",

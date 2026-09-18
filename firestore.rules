@@ -33,6 +33,14 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid));
     }
 
+    // Réglage admin « affichage public des posts » (settings/app.publicFeed).
+    // Doc absent ou champ absent → public par défaut.
+    function publicFeedEnabled() {
+      return !exists(/databases/$(database)/documents/settings/app)
+        || get(/databases/$(database)/documents/settings/app).data
+            .get('publicFeed', true) == true;
+    }
+
     // ── Profils utilisateurs ─────────────────────────────────────────
     match /users/{uid} {
       allow read: if signedIn();
@@ -108,7 +116,8 @@ service cloud.firestore {
     // groupId == null → fil public ; sinon le post appartient à un groupe
     // et sa lecture dépend de la visibilité du groupe.
     match /posts/{postId} {
-      allow read: if resource.data.groupId == null
+      allow read: if (resource.data.groupId == null
+          && (signedIn() || publicFeedEnabled()))
         || groupData(resource.data.groupId).visibility == "public"
         || isGroupMember(resource.data.groupId)
         || isAdmin();
@@ -124,6 +133,12 @@ service cloud.firestore {
             || isGroupMember(request.resource.data.groupId));
       allow update, delete: if isAdmin()
         || (signedIn() && resource.data.authorId == request.auth.uid);
+
+      // ── Réactions emoji : un doc par utilisateur ───────────────────
+      match /reactions/{reactorId} {
+        allow read: if true;
+        allow create, update, delete: if isSelf(reactorId);
+      }
 
       // ── Commentaires ───────────────────────────────────────────────
       match /comments/{commentId} {

@@ -37,6 +37,8 @@ const AuthContext = createContext<AuthState>({
     imagesEnabled: false,
     theme: DEFAULT_THEME,
     language: DEFAULT_LANGUAGE,
+    publicFeed: true,
+    pageSize: 20,
   },
   t: getLabels(DEFAULT_LANGUAGE),
 });
@@ -50,6 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     imagesEnabled: false,
     theme: DEFAULT_THEME,
     language: DEFAULT_LANGUAGE,
+    publicFeed: true,
+    pageSize: 20,
   });
 
   // Paramètres du site (settings/app), modifiables depuis /admin/settings
@@ -61,6 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         theme: typeof data?.theme === "string" ? data.theme : DEFAULT_THEME,
         language:
           typeof data?.language === "string" ? data.language : DEFAULT_LANGUAGE,
+        publicFeed: data?.publicFeed !== false,
+        pageSize:
+          typeof data?.pageSize === "number" &&
+          [10, 20, 50, 100].includes(data.pageSize)
+            ? data.pageSize
+            : 20,
       });
     });
   }, []);

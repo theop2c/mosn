@@ -40,13 +40,22 @@ pour une petite communauté).
 - Inscription / connexion (email + mot de passe, Google) ; en environnement
   `dev`/`test`, bouton de connexion anonyme (Firebase Anonymous Auth)
 - Fil public temps réel (onglets **Tout** / **Abonnements**), création et
-  suppression de posts, profils avec bio et compteurs d'abonnés
+  suppression de posts, profils avec bio et compteurs d'abonnés, avatars
+  générés (initiale + couleur stable, aucun upload nécessaire)
+- **Commentaires** sous les posts (repliables, temps réel, suppression par
+  l'auteur ou un admin) et **réactions emoji** (👍 ❤️ 😂 🎉 😮 😢 — une
+  réaction par utilisateur, compteurs temps réel)
+- **Réglages d'affichage admin** : fil visible ou non sans connexion
+  (appliqué aussi par les règles Firestore), pagination 10/20/50/100 —
+  choisis à l'installation, modifiables dans `/admin/settings`
 - **Recherche d'utilisateurs** par nom (préfixe, insensible à la casse) avec
   boutons **Suivre / Ne plus suivre** et accès direct aux messages
 - **Groupes publics ou privés** : création, adhésion libre (public) ou sur
   demande approuvée par le propriétaire (privé), fil de posts par groupe —
   le contenu d'un groupe privé n'est lisible que par ses membres (règles
-  Firestore)
+  Firestore). Onglet **Infos** (date de création, nombre de membres, accès
+  non modifiable) et **invitation de membres** par le propriétaire via
+  recherche par nom
 - **Messages privés** (DM) : conversations temps réel entre deux
   utilisateurs, liste des conversations triée par activité
 - Signalement de contenus (`/api/report`)
@@ -194,6 +203,8 @@ Dans l'ordre :
    - le **design du site** (parmi les 10) et sa **langue** (parmi les 7) —
      l'assistant lui-même a un sélecteur de langue dans son en-tête, et la
      langue choisie devient celle du site ;
+   - l'**affichage des posts sans connexion** (oui/non) et la
+     **pagination** (10/20/50/100 posts par page) ;
    - l'activation ou non de l'**hébergement d'images** (Firebase Storage,
      plan Blaze requis — laissez décoché si vous n'êtes pas prêt, un admin
      pourra l'activer plus tard depuis `/admin/settings`) ;

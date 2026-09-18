@@ -17,7 +17,7 @@ import type { Post } from "../types";
 type Tab = "all" | "following";
 
 export function Feed() {
-  const { user, t } = useAuth();
+  const { user, settings, t } = useAuth();
   const [tab, setTab] = useState<Tab>("all");
   const [posts, setPosts] = useState<Post[]>([]);
   const [followingIds, setFollowingIds] = useState<string[] | null>(null);
@@ -34,7 +34,13 @@ export function Feed() {
     );
   }, [user, tab]);
 
+  const canView = user != null || settings.publicFeed;
+
   useEffect(() => {
+    if (!canView) {
+      setPosts([]);
+      return;
+    }
     if (tab === "following") {
       if (!followingIds || followingIds.length === 0) {
         setPosts([]);
@@ -45,7 +51,7 @@ export function Feed() {
         where("groupId", "==", null),
         where("authorId", "in", followingIds),
         orderBy("createdAt", "desc"),
-        limit(50),
+        limit(settings.pageSize),
       );
       return onSnapshot(q, (snap) => {
         setPosts(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Post));
@@ -55,12 +61,20 @@ export function Feed() {
       collection(db, "posts"),
       where("groupId", "==", null),
       orderBy("createdAt", "desc"),
-      limit(50),
+      limit(settings.pageSize),
     );
     return onSnapshot(q, (snap) => {
       setPosts(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Post));
     });
-  }, [tab, followingIds]);
+  }, [tab, followingIds, canView, settings.pageSize]);
+
+  if (!canView) {
+    return (
+      <div className="feed">
+        <p className="card">{t.feed.signInToView}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="feed">

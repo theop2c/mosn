@@ -10,6 +10,8 @@ export const ko: Labels = {
     user: "사용자",
     anonymous: "익명",
     guest: "게스트",
+    yes: "예",
+    no: "아니요",
   },
   nav: {
     feed: "피드",
@@ -53,6 +55,7 @@ export const ko: Labels = {
     emptyAll: "아직 게시물이 없습니다.",
     emptyFollowing:
       "팔로우한 사람의 게시물이 없습니다. 검색으로 사용자를 찾아보세요!",
+    signInToView: "게시물을 보려면 로그인하세요.",
   },
   composer: {
     publish: "게시",
@@ -71,6 +74,8 @@ export const ko: Labels = {
     report: "신고",
     reported: "신고됨 ✓",
     reportReason: "신고 사유:",
+    commentPlaceholder: "댓글을 작성하세요…",
+    noComments: "아직 댓글이 없습니다. 대화를 시작해 보세요!",
   },
   follow: {
     follow: "팔로우",
@@ -122,6 +127,15 @@ export const ko: Labels = {
     postIn: (name: string) => `${name}에 게시…`,
     empty: "이 그룹에는 아직 게시물이 없습니다.",
     privateLocked: "🔒 비공개 그룹 — 콘텐츠는 멤버 전용입니다.",
+    tabPosts: "게시물",
+    tabInfo: "정보",
+    infoCreated: "생성일",
+    infoMembers: (n: number) => `멤버 ${n}명`,
+    infoAccess: "접근",
+    accessNote: "그룹 접근 설정은 생성 후 변경할 수 없습니다.",
+    inviteMembers: "멤버 초대",
+    add: "추가",
+    added: "추가됨 ✓",
   },
   messages: {
     title: "메시지",
@@ -196,6 +210,10 @@ export const ko: Labels = {
     languageTitle: "언어",
     languageHint:
       "선택한 언어는 재배포 없이 모든 방문자에게 즉시 적용됩니다 (언어마다 라벨 파일 1개).",
+    publicFeedTitle: "게시물 공개 표시",
+    publicFeedDesc: "로그인하지 않은 방문자도 공개 피드를 볼 수 있습니다.",
+    paginationTitle: "페이지네이션",
+    paginationDesc: "페이지당 불러올 게시물 수.",
     imagesTitle: "이미지 호스팅 (Firebase Storage)",
     imagesDesc: "사용자가 게시물에 이미지를 첨부할 수 있게 합니다.",
     blazeIntro:
@@ -223,6 +241,8 @@ export const ko: Labels = {
     adminPasswordPlaceholder: "최소 6자",
     design: "사이트 디자인",
     language: "사이트 언어",
+    publicFeed: "로그인 없이 게시물을 표시할까요?",
+    pagination: "페이지네이션 (페이지당 게시물 수)",
     imagesToggle: "이미지 호스팅 활성화 (Firebase Storage)",
     imagesNotice:
       "⚠️ Firebase Storage는 유료 Blaze 요금제(사용량 기반 과금)가 필요합니다: 프로젝트를 Blaze로 업그레이드하고, Firebase 콘솔에서 Storage를 활성화한 뒤 storage.rules 파일의 규칙을 게시하세요. 아직 준비가 안 되었다면 체크하지 마세요: 관리자가 나중에 /admin/settings에서 재배포 없이 활성화할 수 있습니다.",

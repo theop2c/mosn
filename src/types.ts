@@ -29,6 +29,10 @@ export interface AppSettings {
   theme: string;
   /** Langue active (id d'un des dictionnaires de src/i18n). */
   language: string;
+  /** Fil public visible sans être connecté. */
+  publicFeed: boolean;
+  /** Nombre de posts chargés par page (10/20/50/100). */
+  pageSize: number;
 }
 
 export interface Comment {

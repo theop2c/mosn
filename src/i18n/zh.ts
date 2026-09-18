@@ -10,6 +10,8 @@ export const zh: Labels = {
     user: "用户",
     anonymous: "匿名",
     guest: "访客",
+    yes: "是",
+    no: "否",
   },
   nav: {
     feed: "动态",
@@ -52,6 +54,7 @@ export const zh: Labels = {
     tabFollowing: "关注",
     emptyAll: "还没有任何帖子。",
     emptyFollowing: "你关注的人还没有发帖。快去搜索找人关注吧！",
+    signInToView: "登录后即可查看帖子。",
   },
   composer: {
     publish: "发布",
@@ -70,6 +73,8 @@ export const zh: Labels = {
     report: "举报",
     reported: "已举报 ✓",
     reportReason: "举报原因：",
+    commentPlaceholder: "写下评论…",
+    noComments: "还没有评论。快来抢沙发！",
   },
   follow: {
     follow: "关注",
@@ -121,6 +126,15 @@ export const zh: Labels = {
     postIn: (name: string) => `在 ${name} 中发布…`,
     empty: "这个群组还没有帖子。",
     privateLocked: "🔒 私密群组 — 内容仅成员可见。",
+    tabPosts: "帖子",
+    tabInfo: "信息",
+    infoCreated: "创建于",
+    infoMembers: (n: number) => `${n} 位成员`,
+    infoAccess: "访问权限",
+    accessNote: "群组的访问权限创建后不可更改。",
+    inviteMembers: "邀请成员",
+    add: "添加",
+    added: "已添加 ✓",
   },
   messages: {
     title: "私信",
@@ -192,6 +206,10 @@ export const zh: Labels = {
     languageTitle: "语言",
     languageHint:
       "所选语言会立即应用于所有访客，无需重新部署（每种语言一个标签文件）。",
+    publicFeedTitle: "公开显示帖子",
+    publicFeedDesc: "允许未登录的访客查看公共动态。",
+    paginationTitle: "分页",
+    paginationDesc: "每页加载的帖子数量。",
     imagesTitle: "图片托管（Firebase Storage）",
     imagesDesc: "允许用户在帖子中附加图片。",
     blazeIntro:
@@ -218,6 +236,8 @@ export const zh: Labels = {
     adminPasswordPlaceholder: "至少 6 个字符",
     design: "站点设计",
     language: "站点语言",
+    publicFeed: "未登录时是否显示帖子？",
+    pagination: "分页（每页帖子数）",
     imagesToggle: "启用图片托管（Firebase Storage）",
     imagesNotice:
       "⚠️ Firebase Storage 需要付费的 Blaze 套餐（按用量计费）：将项目升级到 Blaze，在 Firebase 控制台启用 Storage，并发布 storage.rules 文件中的规则。还没准备好？保持不勾选：管理员之后可在 /admin/settings 启用，无需重新部署。",

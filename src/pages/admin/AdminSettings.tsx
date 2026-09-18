@@ -74,6 +74,41 @@ export function AdminSettings() {
         <label className="toggle">
           <input
             type="checkbox"
+            checked={settings.publicFeed}
+            onChange={(e) => save({ publicFeed: e.target.checked })}
+          />
+          <span>
+            <strong>{t.admin.publicFeedTitle}</strong>
+            <br />
+            {t.admin.publicFeedDesc}
+          </span>
+        </label>
+      </div>
+
+      <div className="card">
+        <h2>{t.admin.paginationTitle}</h2>
+        <p className="hint">{t.admin.paginationDesc}</p>
+        <div className="theme-grid">
+          {[10, 20, 50, 100].map((size) => (
+            <button
+              key={size}
+              type="button"
+              className={`theme-swatch ${
+                settings.pageSize === size ? "selected" : ""
+              }`}
+              onClick={() => save({ pageSize: size })}
+            >
+              {size}
+              {settings.pageSize === size && " ✓"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <label className="toggle">
+          <input
+            type="checkbox"
             checked={settings.imagesEnabled}
             onChange={(e) => save({ imagesEnabled: e.target.checked })}
           />
