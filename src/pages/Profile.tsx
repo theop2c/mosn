@@ -1,14 +1,22 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { useParams } from "react-router-dom";
-import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { Link, useParams } from "react-router-dom";
+import {
+  collection,
+  doc,
+  getCountFromServer,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useAuth } from "../context/AuthContext";
+import { FollowButton } from "../components/FollowButton";
 import type { UserProfile } from "../types";
 
 export function Profile() {
   const { uid } = useParams<{ uid: string }>();
   const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [counts, setCounts] = useState<{ followers: number; following: number }>();
   const [bio, setBio] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -23,6 +31,19 @@ export function Profile() {
     });
   }, [uid]);
 
+  useEffect(() => {
+    if (!uid || !user) return;
+    void Promise.all([
+      getCountFromServer(collection(db, "users", uid, "followers")),
+      getCountFromServer(collection(db, "users", uid, "following")),
+    ]).then(([followers, following]) =>
+      setCounts({
+        followers: followers.data().count,
+        following: following.data().count,
+      }),
+    );
+  }, [uid, user]);
+
   async function handleSave(e: FormEvent) {
     e.preventDefault();
     if (!uid) return;
@@ -35,9 +56,27 @@ export function Profile() {
 
   return (
     <div className="card">
-      <h1>{profile.displayName}</h1>
-      {profile.role === "admin" && <span className="badge">admin</span>}
-      {profile.banned && <span className="badge danger">banni</span>}
+      <div className="row">
+        <div>
+          <h1>{profile.displayName}</h1>
+          {profile.role === "admin" && <span className="badge">admin</span>}
+          {profile.banned && <span className="badge danger">banni</span>}
+          {counts && (
+            <p className="hint">
+              {counts.followers} abonné{counts.followers > 1 ? "s" : ""} ·{" "}
+              {counts.following} abonnement{counts.following > 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
+        {!isOwn && user && uid && (
+          <div className="row-actions">
+            <FollowButton targetUid={uid} />
+            <Link to={`/messages/${uid}`} className="button-link secondary">
+              Message
+            </Link>
+          </div>
+        )}
+      </div>
       {isOwn ? (
         <form onSubmit={handleSave}>
           <textarea

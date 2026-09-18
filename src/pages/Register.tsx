@@ -22,6 +22,7 @@ export function Register() {
       await updateProfile(cred.user, { displayName });
       await setDoc(doc(db, "users", cred.user.uid), {
         displayName,
+        displayNameLower: displayName.toLowerCase(),
         bio: "",
         createdAt: serverTimestamp(),
       });

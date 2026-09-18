@@ -20,6 +20,19 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == uid;
     }
 
+    function groupData(groupId) {
+      return get(/databases/$(database)/documents/groups/$(groupId)).data;
+    }
+
+    function isGroupOwner(groupId) {
+      return signedIn() && groupData(groupId).ownerId == request.auth.uid;
+    }
+
+    function isGroupMember(groupId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid));
+    }
+
     // ── Profils utilisateurs ─────────────────────────────────────────
     match /users/{uid} {
       allow read: if signedIn();
@@ -32,16 +45,80 @@ service cloud.firestore {
         && !request.resource.data.diff(resource.data).affectedKeys()
             .hasAny(["role", "banned"]);
       allow delete: if false; // suppression via fonction admin uniquement
+
+      // ── Abonnements (je suis…) : users/{moi}/following/{cible} ─────
+      match /following/{targetId} {
+        allow read: if signedIn();
+        allow create, delete: if isSelf(uid);
+        allow update: if false;
+      }
+
+      // ── Abonnés (…me suivent) : users/{cible}/followers/{suiveur} ──
+      // Écrit par le suiveur lui-même (miroir de son doc following).
+      match /followers/{followerId} {
+        allow read: if signedIn();
+        allow create, delete: if isSelf(followerId);
+        allow update: if false;
+      }
+    }
+
+    // ── Groupes ──────────────────────────────────────────────────────
+    // Les métadonnées d'un groupe sont visibles par tout utilisateur
+    // connecté ; le CONTENU (posts) d'un groupe privé est réservé aux
+    // membres (voir règles des posts).
+    match /groups/{groupId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.visibility in ["public", "private"]
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 60;
+      allow update, delete: if isAdmin()
+        || (signedIn() && resource.data.ownerId == request.auth.uid);
+
+      // Membres : doc par uid { uid, role, joinedAt }
+      match /members/{memberId} {
+        // On rejoint soi-même un groupe PUBLIC ; le propriétaire ajoute
+        // qui il veut (acceptation des demandes, et lui-même en "owner").
+        allow create: if (isSelf(memberId)
+            && groupData(groupId).visibility == "public"
+            && request.resource.data.role == "member")
+          || isGroupOwner(groupId);
+        allow delete: if isSelf(memberId) || isGroupOwner(groupId) || isAdmin();
+        allow update: if false;
+      }
+
+      // Demandes d'adhésion aux groupes PRIVÉS
+      match /requests/{requesterId} {
+        allow read: if isSelf(requesterId) || isGroupOwner(groupId) || isAdmin();
+        allow create: if isSelf(requesterId)
+          && groupData(groupId).visibility == "private";
+        allow delete: if isSelf(requesterId) || isGroupOwner(groupId) || isAdmin();
+        allow update: if false;
+      }
+    }
+
+    // Lecture "collection group" des adhésions (pour « mes groupes »).
+    match /{path=**}/members/{memberId} {
+      allow read: if signedIn();
     }
 
     // ── Posts ────────────────────────────────────────────────────────
+    // groupId == null → fil public ; sinon le post appartient à un groupe
+    // et sa lecture dépend de la visibilité du groupe.
     match /posts/{postId} {
-      allow read: if true; // feed public
+      allow read: if resource.data.groupId == null
+        || groupData(resource.data.groupId).visibility == "public"
+        || isGroupMember(resource.data.groupId)
+        || isAdmin();
       allow create: if signedIn()
         && request.resource.data.authorId == request.auth.uid
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 2000;
+        && request.resource.data.text.size() <= 2000
+        && (request.resource.data.groupId == null
+            || isGroupMember(request.resource.data.groupId));
       allow update, delete: if isAdmin()
         || (signedIn() && resource.data.authorId == request.auth.uid);
 
@@ -55,6 +132,32 @@ service cloud.firestore {
           && request.resource.data.text.size() <= 1000;
         allow update, delete: if isAdmin()
           || (signedIn() && resource.data.authorId == request.auth.uid);
+      }
+    }
+
+    // ── Messages privés ──────────────────────────────────────────────
+    // dms/{convId} avec convId = les deux uid triés joints par "_".
+    match /dms/{convId} {
+      function convParticipants() {
+        return get(/databases/$(database)/documents/dms/$(convId)).data.participants;
+      }
+
+      allow read: if signedIn() && request.auth.uid in resource.data.participants;
+      allow create: if signedIn()
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.participants.size() == 2;
+      allow update: if signedIn() && request.auth.uid in resource.data.participants;
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if signedIn() && request.auth.uid in convParticipants();
+        allow create: if signedIn()
+          && request.auth.uid in convParticipants()
+          && request.resource.data.senderId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 2000;
+        allow update, delete: if false;
       }
     }
 

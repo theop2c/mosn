@@ -2,6 +2,7 @@ import type { Timestamp } from "firebase/firestore";
 
 export interface UserProfile {
   displayName: string;
+  displayNameLower?: string;
   bio?: string;
   photoURL?: string;
   role?: "admin" | "user";
@@ -14,6 +15,7 @@ export interface Post {
   authorId: string;
   authorName: string;
   text: string;
+  groupId?: string | null;
   createdAt?: Timestamp;
 }
 
@@ -21,6 +23,42 @@ export interface Comment {
   id: string;
   authorId: string;
   authorName: string;
+  text: string;
+  createdAt?: Timestamp;
+}
+
+export interface Group {
+  id: string;
+  name: string;
+  description: string;
+  visibility: "public" | "private";
+  ownerId: string;
+  createdAt?: Timestamp;
+}
+
+export interface GroupMember {
+  uid: string;
+  role: "owner" | "member";
+  joinedAt?: Timestamp;
+}
+
+export interface JoinRequest {
+  uid: string;
+  displayName: string;
+  createdAt?: Timestamp;
+}
+
+export interface Conversation {
+  id: string;
+  participants: string[];
+  participantNames: Record<string, string>;
+  lastMessage?: string;
+  updatedAt?: Timestamp;
+}
+
+export interface DirectMessage {
+  id: string;
+  senderId: string;
   text: string;
   createdAt?: Timestamp;
 }

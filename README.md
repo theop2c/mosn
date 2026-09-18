@@ -39,7 +39,16 @@ pour une petite communauté).
   [Installation](#installation)
 - Inscription / connexion (email + mot de passe, Google) ; en environnement
   `dev`/`test`, bouton de connexion anonyme (Firebase Anonymous Auth)
-- Fil public temps réel, création/suppression de posts, profils avec bio
+- Fil public temps réel (onglets **Tout** / **Abonnements**), création et
+  suppression de posts, profils avec bio et compteurs d'abonnés
+- **Recherche d'utilisateurs** par nom (préfixe, insensible à la casse) avec
+  boutons **Suivre / Ne plus suivre** et accès direct aux messages
+- **Groupes publics ou privés** : création, adhésion libre (public) ou sur
+  demande approuvée par le propriétaire (privé), fil de posts par groupe —
+  le contenu d'un groupe privé n'est lisible que par ses membres (règles
+  Firestore)
+- **Messages privés** (DM) : conversations temps réel entre deux
+  utilisateurs, liste des conversations triée par activité
 - Signalement de contenus (`/api/report`)
 - **Panneau d'admin** (`/admin`) : liste des comptes, promotion/rétrogradation
   d'admins (custom claims), bannissement (compte désactivé + sessions
@@ -84,11 +93,13 @@ pour une petite communauté).
    de ce repo et cliquez sur **Publier**. C'est tout : pas besoin
    d'installer `firebase-tools` ni de taper la moindre commande.
 
-   Pour l'index composite (profil : posts d'un auteur triés par date),
-   inutile de le créer à l'avance : la première fois que la requête
+   Pour les index composites (fil, groupes, abonnements, conversations),
+   inutile de les créer à l'avance : la première fois qu'une requête
    tournera, Firestore affichera une erreur dans la console du navigateur
    contenant **un lien direct** — cliquez dessus, la console Firebase crée
-   l'index toute seule.
+   l'index toute seule. (La liste complète est dans
+   [`firestore.indexes.json`](firestore.indexes.json) si vous préférez
+   l'Option B.)
 
    **Option B — en ligne de commande** (si vous préférez) :
    ```bash
@@ -172,12 +183,28 @@ gratuit. Si vous voulez des avatars et des images dans les posts :
   depuis le client ou via une Netlify Function, et vous ne stockez dans
   Firestore que l'URL de l'image.
 
+## Modèle de données (Firestore)
+
+```
+users/{uid}                    profil (displayName, displayNameLower, bio, role, banned)
+users/{uid}/following/{uid2}   j'ai suivi uid2
+users/{uid}/followers/{uid2}   uid2 me suit (miroir écrit par uid2)
+posts/{postId}                 { authorId, authorName, text, groupId|null, createdAt }
+posts/{postId}/comments/…      (règles prêtes, UI à faire)
+groups/{gid}                   { name, description, visibility, ownerId }
+groups/{gid}/members/{uid}     { uid, role: owner|member }
+groups/{gid}/requests/{uid}    demandes d'adhésion (groupes privés)
+dms/{uidA_uidB}                { participants, participantNames, lastMessage, updatedAt }
+dms/{uidA_uidB}/messages/…     { senderId, text, createdAt }
+reports/{id}                   signalements (écriture serveur uniquement)
+```
+
 ## Pistes d'extension
 
 - Commentaires sous les posts (règles Firestore déjà prêtes : `posts/*/comments`)
-- Likes, follows, DM
+- Likes, notifications
 - Avatars et images (voir section ci-dessus)
-- Pagination infinie du fil
+- Pagination infinie du fil, onglet Abonnements au-delà de 30 suivis
 
 ## Licence
 

@@ -196,6 +196,112 @@ button.danger:not(.link) {
   margin-bottom: 1rem;
 }
 
+.tabs button.link {
+  text-decoration: none;
+}
+
+.tabs button.link.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.button-link {
+  display: inline-block;
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.button-link.secondary {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.search-form {
+  flex-direction: row;
+}
+
+.search-form input {
+  flex: 1;
+}
+
+/* ── Messages privés ──────────────────────────────────────────────── */
+.conversation {
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+}
+
+.link-plain {
+  text-decoration: none;
+  color: var(--muted);
+}
+
+a.conv {
+  display: flex;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.msg {
+  max-width: 75%;
+  align-self: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+}
+
+.msg.mine {
+  align-self: flex-end;
+  background: var(--primary);
+  color: #fff;
+}
+
+.msg p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.msg time {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+.composer-inline {
+  flex-direction: row;
+}
+
+.composer-inline input {
+  flex: 1;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;

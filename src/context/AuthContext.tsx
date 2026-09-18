@@ -6,7 +6,13 @@ import {
   type ReactNode,
 } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { doc, onSnapshot } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  onSnapshot,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import type { UserProfile } from "../types";
 
@@ -46,7 +52,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!user) return;
-    return onSnapshot(doc(db, "users", user.uid), (snap) => {
+    const ref = doc(db, "users", user.uid);
+    // Crée le doc profil s'il n'existe pas (connexion Google, anonyme…)
+    void getDoc(ref).then((snap) => {
+      if (snap.exists()) return;
+      const displayName =
+        user.displayName ?? (user.isAnonymous ? "Invité" : "Utilisateur");
+      return setDoc(ref, {
+        displayName,
+        displayNameLower: displayName.toLowerCase(),
+        bio: "",
+        createdAt: serverTimestamp(),
+      });
+    });
+    return onSnapshot(ref, (snap) => {
       setProfile((snap.data() as UserProfile | undefined) ?? null);
     });
   }, [user]);

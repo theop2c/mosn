@@ -1,0 +1,242 @@
+import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import { db } from "../lib/firebase";
+import { useAuth } from "../context/AuthContext";
+import { PostCard } from "../components/PostCard";
+import type { Group as GroupType, JoinRequest, Post } from "../types";
+
+export function Group() {
+  const { gid } = useParams<{ gid: string }>();
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
+  const [group, setGroup] = useState<GroupType | null>(null);
+  const [isMember, setIsMember] = useState(false);
+  const [hasRequested, setHasRequested] = useState(false);
+  const [requests, setRequests] = useState<JoinRequest[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const isOwner = user != null && group?.ownerId === user.uid;
+  const canView = group != null && (group.visibility === "public" || isMember);
+
+  useEffect(() => {
+    if (!gid) return;
+    return onSnapshot(doc(db, "groups", gid), (snap) => {
+      setGroup(
+        snap.exists() ? ({ id: snap.id, ...snap.data() } as GroupType) : null,
+      );
+    });
+  }, [gid]);
+
+  useEffect(() => {
+    if (!gid || !user) return;
+    const unsubMember = onSnapshot(
+      doc(db, "groups", gid, "members", user.uid),
+      (snap) => setIsMember(snap.exists()),
+    );
+    const unsubRequest = onSnapshot(
+      doc(db, "groups", gid, "requests", user.uid),
+      (snap) => setHasRequested(snap.exists()),
+    );
+    return () => {
+      unsubMember();
+      unsubRequest();
+    };
+  }, [gid, user]);
+
+  useEffect(() => {
+    if (!gid || !isOwner) {
+      setRequests([]);
+      return;
+    }
+    return onSnapshot(collection(db, "groups", gid, "requests"), (snap) => {
+      setRequests(snap.docs.map((d) => d.data() as JoinRequest));
+    });
+  }, [gid, isOwner]);
+
+  useEffect(() => {
+    if (!gid || !canView) {
+      setPosts([]);
+      return;
+    }
+    const q = query(
+      collection(db, "posts"),
+      where("groupId", "==", gid),
+      orderBy("createdAt", "desc"),
+      limit(50),
+    );
+    return onSnapshot(q, (snap) => {
+      setPosts(snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Post));
+    });
+  }, [gid, canView]);
+
+  if (!group) return <p className="center">Groupe introuvable.</p>;
+
+  async function join() {
+    if (!gid || !user || !group) return;
+    setError(null);
+    try {
+      if (group.visibility === "public") {
+        await setDoc(doc(db, "groups", gid, "members", user.uid), {
+          uid: user.uid,
+          role: "member",
+          joinedAt: serverTimestamp(),
+        });
+      } else {
+        await setDoc(doc(db, "groups", gid, "requests", user.uid), {
+          uid: user.uid,
+          displayName: profile?.displayName ?? "Utilisateur",
+          createdAt: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur");
+    }
+  }
+
+  async function leave() {
+    if (!gid || !user) return;
+    await deleteDoc(doc(db, "groups", gid, "members", user.uid));
+  }
+
+  async function approve(request: JoinRequest) {
+    if (!gid) return;
+    const batch = writeBatch(db);
+    batch.set(doc(db, "groups", gid, "members", request.uid), {
+      uid: request.uid,
+      role: "member",
+      joinedAt: serverTimestamp(),
+    });
+    batch.delete(doc(db, "groups", gid, "requests", request.uid));
+    await batch.commit();
+  }
+
+  async function reject(request: JoinRequest) {
+    if (!gid) return;
+    await deleteDoc(doc(db, "groups", gid, "requests", request.uid));
+  }
+
+  async function deleteGroup() {
+    if (!gid || !confirm("Supprimer ce groupe ? (les posts resteront orphelins)")) return;
+    await deleteDoc(doc(db, "groups", gid));
+    navigate("/groups");
+  }
+
+  async function publish(e: FormEvent) {
+    e.preventDefault();
+    if (!gid || !user || !text.trim()) return;
+    setError(null);
+    try {
+      await addDoc(collection(db, "posts"), {
+        authorId: user.uid,
+        authorName: profile?.displayName ?? user.displayName ?? "Anonyme",
+        text: text.trim(),
+        groupId: gid,
+        createdAt: serverTimestamp(),
+      });
+      setText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de la publication");
+    }
+  }
+
+  return (
+    <div>
+      <div className="card">
+        <div className="row">
+          <div>
+            <h1>{group.name}</h1>
+            <span className="badge">
+              {group.visibility === "public" ? "public" : "privé"}
+            </span>
+            {group.description && <p>{group.description}</p>}
+          </div>
+          <div className="row-actions">
+            {user && !isMember && !hasRequested && (
+              <button onClick={join}>
+                {group.visibility === "public"
+                  ? "Rejoindre"
+                  : "Demander à rejoindre"}
+              </button>
+            )}
+            {hasRequested && !isMember && (
+              <span className="hint">Demande envoyée…</span>
+            )}
+            {isMember && !isOwner && (
+              <button className="secondary" onClick={leave}>
+                Quitter
+              </button>
+            )}
+            {isOwner && (
+              <button className="link danger" onClick={deleteGroup}>
+                Supprimer le groupe
+              </button>
+            )}
+          </div>
+        </div>
+        {error && <p className="error">{error}</p>}
+      </div>
+
+      {isOwner && requests.length > 0 && (
+        <div className="card">
+          <h2>Demandes d'adhésion</h2>
+          {requests.map((r) => (
+            <div className="row" key={r.uid}>
+              <span>{r.displayName}</span>
+              <div className="row-actions">
+                <button onClick={() => approve(r)}>Accepter</button>
+                <button className="secondary" onClick={() => reject(r)}>
+                  Refuser
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {canView ? (
+        <>
+          {isMember && (
+            <form className="card composer" onSubmit={publish}>
+              <textarea
+                placeholder={`Publier dans ${group.name}…`}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                maxLength={2000}
+                rows={3}
+              />
+              <button type="submit" disabled={!text.trim()}>
+                Publier
+              </button>
+            </form>
+          )}
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+          {posts.length === 0 && (
+            <p className="center">Aucun post dans ce groupe.</p>
+          )}
+        </>
+      ) : (
+        <p className="card">
+          🔒 Groupe privé — le contenu est réservé aux membres.
+        </p>
+      )}
+    </div>
+  );
+}

@@ -26,6 +26,9 @@ export function Layout() {
         )}
         <nav>
           <NavLink to="/">Fil</NavLink>
+          {user && <NavLink to="/search">Recherche</NavLink>}
+          {user && <NavLink to="/groups">Groupes</NavLink>}
+          {user && <NavLink to="/messages">Messages</NavLink>}
           {user && <NavLink to={`/u/${user.uid}`}>Profil</NavLink>}
           {isAdmin && <NavLink to="/admin/users">Admin</NavLink>}
           {user ? (
