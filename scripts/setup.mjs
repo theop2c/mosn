@@ -50,6 +50,35 @@ const adminPassword = (
   await rl.question("Mot de passe de l'administrateur (6 car. min) : ")
 ).trim();
 
+const THEME_IDS = [
+  "indigo",
+  "ocean",
+  "forest",
+  "sunset",
+  "rose",
+  "midnight",
+  "paper",
+  "mono",
+  "violet",
+  "citrus",
+];
+let theme = "";
+while (!THEME_IDS.includes(theme)) {
+  theme =
+    (
+      await rl.question(`Design du site (${THEME_IDS.join(" / ")}) [indigo] : `)
+    ).trim() || "indigo";
+}
+
+const LANGUAGE_IDS = ["fr", "en", "es", "zh", "pt", "ja", "ko"];
+let language = "";
+while (!LANGUAGE_IDS.includes(language)) {
+  language =
+    (
+      await rl.question(`Langue du site (${LANGUAGE_IDS.join(" / ")}) [fr] : `)
+    ).trim() || "fr";
+}
+
 const imagesAnswer = (
   await rl.question(
     "Activer l'hébergement d'images (Firebase Storage, plan Blaze requis) ? (o/N) : ",
@@ -115,9 +144,11 @@ VITE_FIREBASE_APP_ID=${values.appId}
 ADMIN_EMAIL=${adminEmail}
 ADMIN_PASSWORD=${adminPassword}
 
-# ── Hébergement d'images (Firebase Storage, plan Blaze requis) ─────
-# Valeur initiale du réglage : modifiable ensuite depuis /admin/settings.
+# ── Réglages initiaux du site (appliqués par /api/bootstrap-admin, ─
+# ── modifiables ensuite depuis /admin/settings, sans redéploiement) ─
 ENABLE_IMAGES=${imagesEnabled}
+SITE_THEME=${theme}
+SITE_LANGUAGE=${language}
 
 # ── Netlify Functions (secret serveur, à compléter à la main) ──────
 # Console Firebase → Paramètres → Comptes de service → Générer une clé

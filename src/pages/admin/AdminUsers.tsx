@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import type { AdminUser } from "../../types";
 
 export function AdminUsers() {
-  const { user } = useAuth();
+  const { user, t } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -15,9 +15,9 @@ export function AdminUsers() {
       const data = await api<{ users: AdminUser[] }>("/api/admin/users");
       setUsers(data.users);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de chargement");
+      setError(err instanceof Error ? err.message : t.admin.loadFailed);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     void load();
@@ -30,7 +30,7 @@ export function AdminUsers() {
       await api(path, { body });
       await load();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur");
+      setError(err instanceof Error ? err.message : t.common.error);
     } finally {
       setBusy(null);
     }
@@ -39,16 +39,16 @@ export function AdminUsers() {
   return (
     <div>
       <AdminTabs />
-      <h1>Utilisateurs</h1>
+      <h1>{t.admin.usersTitle}</h1>
       {error && <p className="error">{error}</p>}
       <table className="table">
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Rôle</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>{t.admin.thName}</th>
+            <th>{t.admin.thEmail}</th>
+            <th>{t.admin.thRole}</th>
+            <th>{t.admin.thStatus}</th>
+            <th>{t.admin.thActions}</th>
           </tr>
         </thead>
         <tbody>
@@ -56,8 +56,8 @@ export function AdminUsers() {
             <tr key={u.uid}>
               <td>{u.displayName ?? "—"}</td>
               <td>{u.email ?? "—"}</td>
-              <td>{u.admin ? "admin" : "user"}</td>
-              <td>{u.disabled ? "banni" : "actif"}</td>
+              <td>{u.admin ? t.admin.roleAdmin : t.admin.roleUser}</td>
+              <td>{u.disabled ? t.admin.statusBanned : t.admin.statusActive}</td>
               <td>
                 {u.uid !== user?.uid && (
                   <>
@@ -72,7 +72,7 @@ export function AdminUsers() {
                         )
                       }
                     >
-                      {u.admin ? "Rétrograder" : "Promouvoir admin"}
+                      {u.admin ? t.admin.demote : t.admin.promote}
                     </button>{" "}
                     <button
                       className="link danger"
@@ -85,7 +85,7 @@ export function AdminUsers() {
                         )
                       }
                     >
-                      {u.disabled ? "Débannir" : "Bannir"}
+                      {u.disabled ? t.admin.unban : t.admin.ban}
                     </button>
                   </>
                 )}

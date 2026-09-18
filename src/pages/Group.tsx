@@ -21,7 +21,7 @@ import type { Group as GroupType, JoinRequest, Post } from "../types";
 
 export function Group() {
   const { gid } = useParams<{ gid: string }>();
-  const { user, profile } = useAuth();
+  const { user, profile, t } = useAuth();
   const navigate = useNavigate();
   const [group, setGroup] = useState<GroupType | null>(null);
   const [isMember, setIsMember] = useState(false);
@@ -84,7 +84,7 @@ export function Group() {
     });
   }, [gid, canView]);
 
-  if (!group) return <p className="center">Groupe introuvable.</p>;
+  if (!group) return <p className="center">{t.group.notFound}</p>;
 
   async function join() {
     if (!gid || !user || !group) return;
@@ -99,12 +99,12 @@ export function Group() {
       } else {
         await setDoc(doc(db, "groups", gid, "requests", user.uid), {
           uid: user.uid,
-          displayName: profile?.displayName ?? "Utilisateur",
+          displayName: profile?.displayName ?? t.common.user,
           createdAt: serverTimestamp(),
         });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur");
+      setError(err instanceof Error ? err.message : t.common.error);
     }
   }
 
@@ -131,7 +131,7 @@ export function Group() {
   }
 
   async function deleteGroup() {
-    if (!gid || !confirm("Supprimer ce groupe ? (les posts resteront orphelins)")) return;
+    if (!gid || !confirm(t.group.confirmDelete)) return;
     await deleteDoc(doc(db, "groups", gid));
     navigate("/groups");
   }
@@ -143,29 +143,29 @@ export function Group() {
           <div>
             <h1>{group.name}</h1>
             <span className="badge">
-              {group.visibility === "public" ? "public" : "privé"}
+              {group.visibility === "public"
+                ? t.groups.badgePublic
+                : t.groups.badgePrivate}
             </span>
             {group.description && <p>{group.description}</p>}
           </div>
           <div className="row-actions">
             {user && !isMember && !hasRequested && (
               <button onClick={join}>
-                {group.visibility === "public"
-                  ? "Rejoindre"
-                  : "Demander à rejoindre"}
+                {group.visibility === "public" ? t.group.join : t.group.request}
               </button>
             )}
             {hasRequested && !isMember && (
-              <span className="hint">Demande envoyée…</span>
+              <span className="hint">{t.group.requestSent}</span>
             )}
             {isMember && !isOwner && (
               <button className="secondary" onClick={leave}>
-                Quitter
+                {t.group.leave}
               </button>
             )}
             {isOwner && (
               <button className="link danger" onClick={deleteGroup}>
-                Supprimer le groupe
+                {t.group.deleteGroup}
               </button>
             )}
           </div>
@@ -175,14 +175,14 @@ export function Group() {
 
       {isOwner && requests.length > 0 && (
         <div className="card">
-          <h2>Demandes d'adhésion</h2>
+          <h2>{t.group.requests}</h2>
           {requests.map((r) => (
             <div className="row" key={r.uid}>
               <span>{r.displayName}</span>
               <div className="row-actions">
-                <button onClick={() => approve(r)}>Accepter</button>
+                <button onClick={() => approve(r)}>{t.group.accept}</button>
                 <button className="secondary" onClick={() => reject(r)}>
-                  Refuser
+                  {t.group.refuse}
                 </button>
               </div>
             </div>
@@ -195,20 +195,16 @@ export function Group() {
           {isMember && (
             <PostComposer
               groupId={gid ?? null}
-              placeholder={`Publier dans ${group.name}…`}
+              placeholder={t.group.postIn(group.name)}
             />
           )}
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}
-          {posts.length === 0 && (
-            <p className="center">Aucun post dans ce groupe.</p>
-          )}
+          {posts.length === 0 && <p className="center">{t.group.empty}</p>}
         </>
       ) : (
-        <p className="card">
-          🔒 Groupe privé — le contenu est réservé aux membres.
-        </p>
+        <p className="card">{t.group.privateLocked}</p>
       )}
     </div>
   );

@@ -10,12 +10,14 @@ import {
   startAt,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { useAuth } from "../context/AuthContext";
 import { FollowButton } from "../components/FollowButton";
 import type { UserProfile } from "../types";
 
 type Result = UserProfile & { id: string };
 
 export function Search() {
+  const { t } = useAuth();
   const [term, setTerm] = useState("");
   const [results, setResults] = useState<Result[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -23,15 +25,15 @@ export function Search() {
   async function handleSearch(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    const t = term.trim().toLowerCase();
-    if (!t) return;
+    const needle = term.trim().toLowerCase();
+    if (!needle) return;
     try {
       // Recherche par préfixe (insensible à la casse) sur displayNameLower
       const q = query(
         collection(db, "users"),
         orderBy("displayNameLower"),
-        startAt(t),
-        endAt(t + ""),
+        startAt(needle),
+        endAt(needle + ""),
         limit(20),
       );
       const snap = await getDocs(q);
@@ -39,26 +41,24 @@ export function Search() {
         snap.docs.map((d) => ({ id: d.id, ...(d.data() as UserProfile) })),
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur de recherche");
+      setError(err instanceof Error ? err.message : t.search.failed);
     }
   }
 
   return (
     <div>
-      <h1>Rechercher des utilisateurs</h1>
+      <h1>{t.search.title}</h1>
       <form className="card search-form" onSubmit={handleSearch}>
         <input
           value={term}
           onChange={(e) => setTerm(e.target.value)}
-          placeholder="Tapez un nom…"
+          placeholder={t.search.placeholder}
           required
         />
-        <button type="submit">Rechercher</button>
+        <button type="submit">{t.search.submit}</button>
       </form>
       {error && <p className="error">{error}</p>}
-      {results?.length === 0 && (
-        <p className="center">Aucun utilisateur trouvé.</p>
-      )}
+      {results?.length === 0 && <p className="center">{t.search.none}</p>}
       {results?.map((u) => (
         <div className="card row" key={u.id}>
           <div>
@@ -70,7 +70,7 @@ export function Search() {
           <div className="row-actions">
             <FollowButton targetUid={u.id} />
             <Link to={`/messages/${u.id}`} className="button-link secondary">
-              Message
+              {t.profile.message}
             </Link>
           </div>
         </div>

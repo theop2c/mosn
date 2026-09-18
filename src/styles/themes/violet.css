@@ -1,0 +1,23 @@
+/* Design « Violet » — violets profonds, ambiance créative. */
+:root[data-theme="violet"] {
+  --primary: #7c3aed;
+  --primary-contrast: #ffffff;
+  --bg: #faf5ff;
+  --surface: #ffffff;
+  --text: #241537;
+  --muted: #7d6c93;
+  --border: #e9d5ff;
+  --radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="violet"] {
+    --primary: #a78bfa;
+    --primary-contrast: #22114a;
+    --bg: #150f1e;
+    --surface: #201730;
+    --text: #ece4f8;
+    --muted: #a595bd;
+    --border: #382a52;
+  }
+}

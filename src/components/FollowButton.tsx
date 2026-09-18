@@ -13,7 +13,7 @@ import { useAuth } from "../context/AuthContext";
  * users/{moi}/following/{cible} et users/{cible}/followers/{moi}.
  */
 export function FollowButton({ targetUid }: { targetUid: string }) {
-  const { user } = useAuth();
+  const { user, t } = useAuth();
   const [following, setFollowing] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function FollowButton({ targetUid }: { targetUid: string }) {
 
   return (
     <button className={following ? "secondary" : ""} onClick={toggle}>
-      {following ? "Ne plus suivre" : "Suivre"}
+      {following ? t.follow.unfollow : t.follow.follow}
     </button>
   );
 }

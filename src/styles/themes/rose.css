@@ -1,0 +1,23 @@
+/* Design « Rose » — rose vif, doux et moderne. */
+:root[data-theme="rose"] {
+  --primary: #db2777;
+  --primary-contrast: #ffffff;
+  --bg: #fdf2f8;
+  --surface: #ffffff;
+  --text: #2d1220;
+  --muted: #8e6a7d;
+  --border: #fbcfe8;
+  --radius: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="rose"] {
+    --primary: #f472b6;
+    --primary-contrast: #3d0a24;
+    --bg: #1c0f16;
+    --surface: #2a1721;
+    --text: #f7e3ee;
+    --muted: #bd93a9;
+    --border: #45263a;
+  }
+}

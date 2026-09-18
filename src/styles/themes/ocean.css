@@ -1,0 +1,23 @@
+/* Design « Océan » — bleus frais, ambiance marine. */
+:root[data-theme="ocean"] {
+  --primary: #0284c7;
+  --primary-contrast: #ffffff;
+  --bg: #f0f9ff;
+  --surface: #ffffff;
+  --text: #0c2b3a;
+  --muted: #5b7c92;
+  --border: #bae6fd;
+  --radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="ocean"] {
+    --primary: #38bdf8;
+    --primary-contrast: #06283b;
+    --bg: #0b1a24;
+    --surface: #102635;
+    --text: #dbeefc;
+    --muted: #7fa3bd;
+    --border: #1e3a4f;
+  }
+}

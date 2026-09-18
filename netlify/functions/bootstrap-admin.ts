@@ -62,6 +62,8 @@ export default safe(async (req: Request) => {
   if (!(await settingsRef.get()).exists) {
     await settingsRef.set({
       imagesEnabled: process.env.ENABLE_IMAGES === "true",
+      theme: process.env.SITE_THEME || "indigo",
+      language: process.env.SITE_LANGUAGE || "fr",
     });
   }
 

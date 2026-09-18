@@ -23,6 +23,10 @@ export interface Post {
 export interface AppSettings {
   /** Hébergement d'images via Firebase Storage (nécessite le plan Blaze). */
   imagesEnabled: boolean;
+  /** Design actif (id d'un des 10 thèmes de src/styles/themes). */
+  theme: string;
+  /** Langue active (id d'un des dictionnaires de src/i18n). */
+  language: string;
 }
 
 export interface Comment {
@@ -76,6 +80,14 @@ export interface AdminUser {
   disabled: boolean;
   admin: boolean;
   createdAt: string;
+}
+
+export interface Invite {
+  email: string;
+  invitedBy: string;
+  status: "sent" | "accepted";
+  createdAt?: Timestamp;
+  acceptedAt?: Timestamp;
 }
 
 export interface Report {

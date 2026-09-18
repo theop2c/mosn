@@ -4,6 +4,7 @@
   --text: #1a1d21;
   --muted: #6b7280;
   --primary: #4f46e5;
+  --primary-contrast: #ffffff;
   --danger: #dc2626;
   --border: #e5e7eb;
   --radius: 10px;
@@ -127,7 +128,7 @@ button {
   border: none;
   border-radius: var(--radius);
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
   font: inherit;
   cursor: pointer;
 }
@@ -245,7 +246,7 @@ button.danger:not(.link) {
   padding: 0.55rem 1rem;
   border-radius: var(--radius);
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
   text-decoration: none;
   font-size: 0.95rem;
 }
@@ -302,7 +303,7 @@ a.conv {
 .msg.mine {
   align-self: flex-end;
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
 }
 
 .msg p {
@@ -345,9 +346,45 @@ a.conv {
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
   font-size: 0.75rem;
   margin-right: 0.4rem;
+}
+
+/* ── Sélecteur de design (admin) ──────────────────────────────────── */
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.6rem;
+}
+
+.theme-swatch {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+.theme-swatch.selected {
+  border-color: var(--primary);
+}
+
+.theme-swatch .swatches {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.theme-swatch .swatches span {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .badge.danger {
@@ -374,6 +411,29 @@ a.conv {
 }
 
 /* ── Assistant d'installation ─────────────────────────────────────── */
+.install-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.install-langs button.link {
+  text-decoration: none;
+}
+
+.install-langs button.link.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.label-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 .install {
   max-width: 600px;
   margin: 2rem auto;

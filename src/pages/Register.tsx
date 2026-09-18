@@ -6,8 +6,10 @@ import {
 } from "firebase/auth";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
+import { useAuth } from "../context/AuthContext";
 
 export function Register() {
+  const { t } = useAuth();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,16 +30,16 @@ export function Register() {
       });
       navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de l'inscription");
+      setError(err instanceof Error ? err.message : t.register.failed);
     }
   }
 
   return (
     <div className="card auth-card">
-      <h1>Créer un compte</h1>
+      <h1>{t.register.title}</h1>
       <form onSubmit={handleSubmit}>
         <input
-          placeholder="Nom affiché"
+          placeholder={t.register.displayName}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           required
@@ -45,24 +47,24 @@ export function Register() {
         />
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t.login.email}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Mot de passe (6 caractères min.)"
+          placeholder={t.register.password}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           minLength={6}
         />
-        <button type="submit">S'inscrire</button>
+        <button type="submit">{t.register.submit}</button>
       </form>
       {error && <p className="error">{error}</p>}
       <p>
-        Déjà inscrit ? <Link to="/login">Connexion</Link>
+        {t.register.already} <Link to="/login">{t.nav.login}</Link>
       </p>
     </div>
   );

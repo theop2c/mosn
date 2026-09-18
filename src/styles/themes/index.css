@@ -1,0 +1,15 @@
+/* La panoplie de designs de MOSN : 10 feuilles de style, chacune redéfinit
+   les tokens ( --primary, --bg, … ) pour un data-theme donné.
+   Le design actif est choisi par un admin (/admin/settings), stocké dans
+   Firestore (settings/app.theme) et appliqué via
+   document.documentElement.dataset.theme — sans redéploiement. */
+@import "./indigo.css";
+@import "./ocean.css";
+@import "./forest.css";
+@import "./sunset.css";
+@import "./rose.css";
+@import "./midnight.css";
+@import "./paper.css";
+@import "./mono.css";
+@import "./violet.css";
+@import "./citrus.css";

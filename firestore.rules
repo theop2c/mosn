@@ -169,6 +169,18 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ── Invitations ──────────────────────────────────────────────────
+    // invites/{email} : envoyées par les admins ; l'invité (connecté via
+    // le lien email) peut uniquement marquer la sienne comme acceptée.
+    match /invites/{emailId} {
+      allow read, create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (signedIn()
+          && request.auth.token.email == emailId
+          && request.resource.data.diff(resource.data).affectedKeys()
+              .hasOnly(["status", "acceptedAt"]));
+    }
+
     // ── Signalements ─────────────────────────────────────────────────
     // Créés via la fonction report-content ; lisibles par les admins.
     match /reports/{reportId} {

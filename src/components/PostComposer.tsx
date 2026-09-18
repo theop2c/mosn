@@ -10,12 +10,12 @@ import { useAuth } from "../context/AuthContext";
  */
 export function PostComposer({
   groupId = null,
-  placeholder = "Quoi de neuf ?",
+  placeholder,
 }: {
   groupId?: string | null;
   placeholder?: string;
 }) {
-  const { user, profile, settings } = useAuth();
+  const { user, profile, settings, t } = useAuth();
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -33,7 +33,8 @@ export function PostComposer({
       const imageUrl = file ? await uploadPostImage(user.uid, file) : null;
       await addDoc(collection(db, "posts"), {
         authorId: user.uid,
-        authorName: profile?.displayName ?? user.displayName ?? "Anonyme",
+        authorName:
+          profile?.displayName ?? user.displayName ?? t.common.anonymous,
         text: text.trim(),
         groupId,
         imageUrl,
@@ -45,8 +46,8 @@ export function PostComposer({
     } catch (err) {
       setError(
         err instanceof Error
-          ? `${err.message}${file ? " — si l'upload échoue, vérifiez que Firebase Storage est activé (plan Blaze) et que ses règles sont publiées." : ""}`
-          : "Échec de la publication",
+          ? `${err.message}${file ? ` — ${t.composer.uploadHint}` : ""}`
+          : t.composer.failed,
       );
     } finally {
       setBusy(false);
@@ -56,7 +57,7 @@ export function PostComposer({
   return (
     <form className="card composer" onSubmit={handleSubmit}>
       <textarea
-        placeholder={placeholder}
+        placeholder={placeholder ?? t.feed.placeholder}
         value={text}
         onChange={(e) => setText(e.target.value)}
         maxLength={2000}
@@ -71,7 +72,7 @@ export function PostComposer({
         />
       )}
       <button type="submit" disabled={!text.trim() || busy}>
-        {busy ? "Publication…" : "Publier"}
+        {busy ? t.composer.publishing : t.composer.publish}
       </button>
       {error && <p className="error">{error}</p>}
     </form>

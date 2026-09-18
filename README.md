@@ -53,10 +53,24 @@ pour une petite communauté).
 - **Hébergement d'images optionnel** (Firebase Storage, plan Blaze) :
   activable par un admin pendant l'installation ou depuis
   `/admin/settings`, sans redéploiement — images jointes aux posts
-- **Panneau d'admin** (`/admin`) : liste des comptes, promotion/rétrogradation
-  d'admins (custom claims), bannissement (compte désactivé + sessions
-  révoquées), modération des signalements, suppression de posts, paramètres
-  du site (hébergement d'images)
+- **Invitations par email** : l'admin saisit une adresse, Firebase envoie
+  lui-même le lien (gratuit, aucun service d'emailing tiers) ; l'invité
+  clique, est connecté automatiquement, choisit son nom et crée son mot de
+  passe — suivi des invitations (envoyée/acceptée) dans l'admin
+- **10 designs au choix** : une panoplie de 10 feuilles de style
+  (`src/styles/themes/`) — Indigo, Océan, Forêt, Coucher de soleil, Rose,
+  Minuit, Papier, Mono, Violet, Agrumes. L'admin choisit le design dans
+  `/admin/settings` ; il s'applique **immédiatement à tous les visiteurs**,
+  sans redéploiement (stocké dans Firestore, `settings/app.theme`)
+- **7 langues au choix** : un fichier de labels par langue (`src/i18n/`) —
+  français, anglais, espagnol, chinois mandarin, portugais, japonais,
+  coréen. Même mécanique que les designs : l'admin choisit la langue dans
+  `/admin/settings`, appliquée **immédiatement à tous les visiteurs**
+  (`settings/app.language`)
+- **Panneau d'admin** (`/admin`) : liste des comptes, invitations,
+  promotion/rétrogradation d'admins (custom claims), bannissement (compte
+  désactivé + sessions révoquées), modération des signalements, suppression
+  de posts, paramètres du site (design + hébergement d'images)
 - Règles Firestore verrouillées : les champs sensibles (`role`, `banned`) et
   les signalements ne sont modifiables que côté serveur
 
@@ -110,7 +124,10 @@ Dans l'ordre :
    > Activer**.
 4. **Activer les fournisseurs d'authentification** : **Build →
    Authentication → Méthodes de connexion** :
-   - **E-mail/Mot de passe** — obligatoire (inscriptions + compte admin) ;
+   - **E-mail/Mot de passe** — obligatoire (inscriptions + compte admin).
+     Dans le même panneau, activez aussi **« Lien e-mail (connexion sans
+     mot de passe) »** si vous voulez utiliser les **invitations par
+     email** depuis l'admin ;
    - **Google** — connexion en un clic ;
    - **Anonyme** — recommandé pour les environnements `dev`/`test` : la
      page de connexion y affiche un bouton de connexion anonyme.
@@ -170,6 +187,9 @@ Dans l'ordre :
      **connexion anonyme** (pensez à activer le fournisseur « Anonyme »
      dans Firebase Authentication) ;
    - l'**email et le mot de passe de l'administrateur** ;
+   - le **design du site** (parmi les 10) et sa **langue** (parmi les 7) —
+     l'assistant lui-même a un sélecteur de langue dans son en-tête, et la
+     langue choisie devient celle du site ;
    - l'activation ou non de l'**hébergement d'images** (Firebase Storage,
      plan Blaze requis — laissez décoché si vous n'êtes pas prêt, un admin
      pourra l'activer plus tard depuis `/admin/settings`) ;
@@ -228,6 +248,26 @@ Puis ouvrez `http://localhost:8888/api/bootstrap-admin` pour créer l'admin.
 | `/api/admin/delete-post` | POST | admin | Supprimer un post + commentaires |
 | `/api/bootstrap-admin` | GET/POST | env | Créer/promouvoir l'admin depuis `ADMIN_EMAIL`/`ADMIN_PASSWORD` |
 
+## Invitations par email
+
+Depuis **Admin → Invitations** (`/admin/invites`), un admin saisit une
+adresse email et clique sur **Inviter** :
+
+1. **Firebase envoie lui-même l'email** (lien de connexion) — gratuit,
+   inclus dans le plan Spark, aucun service d'emailing tiers à configurer.
+2. L'invité clique sur le lien et atterrit sur `/invite` : il est
+   **connecté automatiquement** (le lien fait office d'authentification).
+3. Il choisit son **nom affiché** et **crée son mot de passe**, puis est
+   redirigé vers le fil — il pourra ensuite se reconnecter classiquement
+   par email + mot de passe.
+
+Le suivi (envoyée / acceptée ✓) s'affiche dans l'onglet Invitations.
+
+**Prérequis (une fois)** : console Firebase → **Authentication → Sign-in
+method → E-mail/Mot de passe** → activer aussi **« Lien e-mail (connexion
+sans mot de passe) »**. Le domaine Netlify doit être dans les domaines
+autorisés (déjà fait à l'installation).
+
 ## Dépannage des fonctions (`/api/*`)
 
 Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
@@ -241,6 +281,7 @@ Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
 | `auth/unauthorized-domain` (côté site, à la connexion Google) | Domaine Netlify non autorisé dans Firebase Auth | **Authentication → Settings → Domaines autorisés → Ajouter un domaine** (ex. `mosn-dev.netlify.app`) |
 | `auth/operation-not-allowed` (côté site, à la connexion) | Le fournisseur utilisé n'est pas activé (le compte admin, lui, a pu être créé par le SDK admin) | **Authentication → Sign-in method** → activez **E-mail/Mot de passe** (et Google, Anonyme si besoin) |
 | `auth/invalid-credential` avec les identifiants admin | Le compte existait déjà avec un autre mot de passe (`bootstrap-admin` répond `"created":false` et ne modifie pas le mot de passe) | Ouvrez `/api/bootstrap-admin?reset=1` pour forcer le mot de passe à la valeur de `ADMIN_PASSWORD`, ou utilisez « Mot de passe oublié ? » sur la page de connexion |
+| `auth/operation-not-allowed` à l'envoi d'une invitation | « Lien e-mail (connexion sans mot de passe) » désactivé | **Authentication → Sign-in method → E-mail/Mot de passe** → activez le lien e-mail |
 
 Après tout changement de variable d'environnement : **Deploys → Trigger
 deploy** (les variables sont figées au moment du build/déploiement).

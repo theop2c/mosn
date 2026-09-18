@@ -7,7 +7,7 @@ const siteName = import.meta.env.VITE_SITE_NAME || "MOSN";
 const siteEnv = import.meta.env.VITE_SITE_ENV;
 
 export function Layout() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, t } = useAuth();
   const navigate = useNavigate();
 
   async function handleSignOut() {
@@ -25,18 +25,18 @@ export function Layout() {
           <span className="badge env">{siteEnv}</span>
         )}
         <nav>
-          <NavLink to="/">Fil</NavLink>
-          {user && <NavLink to="/search">Recherche</NavLink>}
-          {user && <NavLink to="/groups">Groupes</NavLink>}
-          {user && <NavLink to="/messages">Messages</NavLink>}
-          {user && <NavLink to={`/u/${user.uid}`}>Profil</NavLink>}
-          {isAdmin && <NavLink to="/admin/users">Admin</NavLink>}
+          <NavLink to="/">{t.nav.feed}</NavLink>
+          {user && <NavLink to="/search">{t.nav.search}</NavLink>}
+          {user && <NavLink to="/groups">{t.nav.groups}</NavLink>}
+          {user && <NavLink to="/messages">{t.nav.messages}</NavLink>}
+          {user && <NavLink to={`/u/${user.uid}`}>{t.nav.profile}</NavLink>}
+          {isAdmin && <NavLink to="/admin/users">{t.nav.admin}</NavLink>}
           {user ? (
             <button className="link" onClick={handleSignOut}>
-              Déconnexion
+              {t.nav.logout}
             </button>
           ) : (
-            <NavLink to="/login">Connexion</NavLink>
+            <NavLink to="/login">{t.nav.login}</NavLink>
           )}
         </nav>
       </header>

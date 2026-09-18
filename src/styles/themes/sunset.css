@@ -1,0 +1,23 @@
+/* Design « Coucher de soleil » — oranges chauds et énergiques. */
+:root[data-theme="sunset"] {
+  --primary: #ea580c;
+  --primary-contrast: #ffffff;
+  --bg: #fff7ed;
+  --surface: #ffffff;
+  --text: #331b0d;
+  --muted: #92735c;
+  --border: #fed7aa;
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="sunset"] {
+    --primary: #fb923c;
+    --primary-contrast: #3a1a05;
+    --bg: #1c120b;
+    --surface: #2a1a10;
+    --text: #f6e5d8;
+    --muted: #bb9880;
+    --border: #47301f;
+  }
+}

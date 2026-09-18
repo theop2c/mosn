@@ -1,0 +1,22 @@
+/* Design « Indigo » — le thème par défaut de MOSN (identique à index.css,
+   déclaré explicitement pour que le sélecteur de design soit cohérent). */
+:root[data-theme="indigo"] {
+  --primary: #4f46e5;
+  --primary-contrast: #ffffff;
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --text: #1a1d21;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="indigo"] {
+    --bg: #111318;
+    --surface: #1b1e26;
+    --text: #e7e9ee;
+    --muted: #9aa1ad;
+    --border: #2a2e3a;
+  }
+}

@@ -8,10 +8,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { api } from "../../lib/api";
+import { useAuth } from "../../context/AuthContext";
 import { AdminTabs } from "../../components/AdminTabs";
 import type { Report } from "../../types";
 
 export function AdminReports() {
+  const { t } = useAuth();
   const [reports, setReports] = useState<Report[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,20 +33,20 @@ export function AdminReports() {
   }, []);
 
   async function deletePost(postId: string) {
-    if (!confirm("Supprimer le post signalé ?")) return;
+    if (!confirm(t.admin.confirmDeleteReported)) return;
     try {
       await api("/api/admin/delete-post", { body: { postId } });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur");
+      setError(err instanceof Error ? err.message : t.common.error);
     }
   }
 
   return (
     <div>
       <AdminTabs />
-      <h1>Signalements ouverts</h1>
+      <h1>{t.admin.reportsTitle}</h1>
       {error && <p className="error">{error}</p>}
-      {reports.length === 0 && <p>Aucun signalement ouvert. 🎉</p>}
+      {reports.length === 0 && <p>{t.admin.reportsNone}</p>}
       {reports.map((r) => (
         <div className="card" key={r.id}>
           <p>
@@ -53,7 +55,7 @@ export function AdminReports() {
           <p>{r.reason}</p>
           {r.targetType === "post" && (
             <button className="danger" onClick={() => deletePost(r.targetId)}>
-              Supprimer le post
+              {t.admin.deleteReportedPost}
             </button>
           )}
         </div>

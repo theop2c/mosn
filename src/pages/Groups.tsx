@@ -19,7 +19,7 @@ import { useAuth } from "../context/AuthContext";
 import type { Group } from "../types";
 
 export function Groups() {
-  const { user } = useAuth();
+  const { user, t } = useAuth();
   const navigate = useNavigate();
   const [publicGroups, setPublicGroups] = useState<Group[]>([]);
   const [myGroups, setMyGroups] = useState<Group[]>([]);
@@ -79,27 +79,27 @@ export function Groups() {
       });
       navigate(`/g/${groupRef.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de la création");
+      setError(err instanceof Error ? err.message : t.groups.createFailed);
     }
   }
 
   return (
     <div>
-      <h1>Groupes</h1>
+      <h1>{t.groups.title}</h1>
 
       <form className="card" onSubmit={handleCreate}>
-        <h2>Créer un groupe</h2>
+        <h2>{t.groups.createTitle}</h2>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nom du groupe"
+          placeholder={t.groups.namePlaceholder}
           required
           maxLength={60}
         />
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Description (optionnelle)"
+          placeholder={t.groups.descPlaceholder}
           maxLength={300}
           rows={2}
         />
@@ -109,27 +109,25 @@ export function Groups() {
             setVisibility(e.target.value as "public" | "private")
           }
         >
-          <option value="public">Public — tout le monde peut rejoindre</option>
-          <option value="private">
-            Privé — adhésion sur demande, contenu réservé aux membres
-          </option>
+          <option value="public">{t.groups.optionPublic}</option>
+          <option value="private">{t.groups.optionPrivate}</option>
         </select>
-        <button type="submit">Créer</button>
+        <button type="submit">{t.groups.create}</button>
         {error && <p className="error">{error}</p>}
       </form>
 
       {myGroups.length > 0 && (
         <>
-          <h2>Mes groupes</h2>
+          <h2>{t.groups.mine}</h2>
           {myGroups.map((g) => (
             <GroupRow key={g.id} group={g} />
           ))}
         </>
       )}
 
-      <h2>Groupes publics</h2>
+      <h2>{t.groups.publicList}</h2>
       {publicGroups.length === 0 && (
-        <p className="center">Aucun groupe public pour le moment.</p>
+        <p className="center">{t.groups.none}</p>
       )}
       {publicGroups.map((g) => (
         <GroupRow key={g.id} group={g} />
@@ -139,13 +137,18 @@ export function Groups() {
 }
 
 function GroupRow({ group }: { group: Group }) {
+  const { t } = useAuth();
   return (
     <div className="card row">
       <div>
         <Link to={`/g/${group.id}`} className="author">
           {group.name}
         </Link>{" "}
-        <span className="badge">{group.visibility === "public" ? "public" : "privé"}</span>
+        <span className="badge">
+          {group.visibility === "public"
+            ? t.groups.badgePublic
+            : t.groups.badgePrivate}
+        </span>
         {group.description && <p className="hint">{group.description}</p>}
       </div>
     </div>

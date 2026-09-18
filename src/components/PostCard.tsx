@@ -7,14 +7,14 @@ import { useAuth } from "../context/AuthContext";
 import type { Post } from "../types";
 
 export function PostCard({ post }: { post: Post }) {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, t } = useAuth();
   const [reported, setReported] = useState(false);
 
   const isOwner = user?.uid === post.authorId;
   const date = post.createdAt?.toDate().toLocaleString() ?? "";
 
   async function handleDelete() {
-    if (!confirm("Supprimer ce post ?")) return;
+    if (!confirm(t.post.confirmDelete)) return;
     if (isOwner) {
       await deleteDoc(doc(db, "posts", post.id));
     } else if (isAdmin) {
@@ -23,7 +23,7 @@ export function PostCard({ post }: { post: Post }) {
   }
 
   async function handleReport() {
-    const reason = prompt("Raison du signalement :");
+    const reason = prompt(t.post.reportReason);
     if (!reason) return;
     await api("/api/report", {
       body: { targetType: "post", targetId: post.id, reason },
@@ -46,12 +46,12 @@ export function PostCard({ post }: { post: Post }) {
       <footer className="post-actions">
         {(isOwner || isAdmin) && (
           <button className="link danger" onClick={handleDelete}>
-            Supprimer
+            {t.post.delete}
           </button>
         )}
         {user && !isOwner && (
           <button className="link" onClick={handleReport} disabled={reported}>
-            {reported ? "Signalé ✓" : "Signaler"}
+            {reported ? t.post.reported : t.post.report}
           </button>
         )}
       </footer>

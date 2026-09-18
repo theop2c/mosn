@@ -1,0 +1,12 @@
+/* Design « Minuit » — sombre en permanence, quel que soit le réglage
+   clair/sombre du système. */
+:root[data-theme="midnight"] {
+  --primary: #6366f1;
+  --primary-contrast: #ffffff;
+  --bg: #0a0a12;
+  --surface: #14141f;
+  --text: #e5e5f0;
+  --muted: #8b8ba3;
+  --border: #26263a;
+  --radius: 10px;
+}

@@ -17,7 +17,7 @@ import type { DirectMessage, UserProfile } from "../types";
 
 export function Conversation() {
   const { uid: otherUid } = useParams<{ uid: string }>();
-  const { user, profile } = useAuth();
+  const { user, profile, t } = useAuth();
   const [other, setOther] = useState<UserProfile | null>(null);
   const [convExists, setConvExists] = useState(false);
   const [messages, setMessages] = useState<DirectMessage[]>([]);
@@ -64,7 +64,7 @@ export function Conversation() {
 
   if (!user || !otherUid) return null;
   if (user.uid === otherUid) {
-    return <p className="center">Impossible de s'écrire à soi-même.</p>;
+    return <p className="center">{t.messages.self}</p>;
   }
 
   async function send(e: FormEvent) {
@@ -78,8 +78,9 @@ export function Conversation() {
         {
           participants: [user.uid, otherUid].sort(),
           participantNames: {
-            [user.uid]: profile?.displayName ?? user.displayName ?? "Moi",
-            [otherUid]: other?.displayName ?? "Utilisateur",
+            [user.uid]:
+              profile?.displayName ?? user.displayName ?? t.messages.me,
+            [otherUid]: other?.displayName ?? t.common.user,
           },
           lastMessage: text.trim().slice(0, 80),
           updatedAt: serverTimestamp(),
@@ -93,7 +94,7 @@ export function Conversation() {
       });
       setText("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de l'envoi");
+      setError(err instanceof Error ? err.message : t.messages.failed);
     }
   }
 
@@ -101,7 +102,7 @@ export function Conversation() {
     <div className="conversation">
       <h1>
         <Link to="/messages" className="link-plain">←</Link>{" "}
-        {other?.displayName ?? "Utilisateur"}
+        {other?.displayName ?? t.common.user}
       </h1>
       <div className="messages">
         {messages.map((m) => (
@@ -114,7 +115,7 @@ export function Conversation() {
           </div>
         ))}
         {messages.length === 0 && (
-          <p className="center">Envoyez le premier message 👋</p>
+          <p className="center">{t.messages.first}</p>
         )}
         <div ref={bottomRef} />
       </div>
@@ -122,11 +123,11 @@ export function Conversation() {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Votre message…"
+          placeholder={t.messages.placeholder}
           maxLength={2000}
         />
         <button type="submit" disabled={!text.trim()}>
-          Envoyer
+          {t.messages.send}
         </button>
       </form>
       {error && <p className="error">{error}</p>}

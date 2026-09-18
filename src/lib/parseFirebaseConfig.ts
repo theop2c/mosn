@@ -51,10 +51,20 @@ export function buildEnvFile(options: {
   adminEmail: string;
   adminPassword: string;
   imagesEnabled: boolean;
+  theme: string;
+  language: string;
   config: FirebaseConfigValues;
 }): string {
-  const { siteName, siteEnv, adminEmail, adminPassword, imagesEnabled, config } =
-    options;
+  const {
+    siteName,
+    siteEnv,
+    adminEmail,
+    adminPassword,
+    imagesEnabled,
+    theme,
+    language,
+    config,
+  } = options;
   return [
     "# Généré par l'assistant d'installation MOSN",
     "",
@@ -76,9 +86,11 @@ export function buildEnvFile(options: {
     `ADMIN_EMAIL=${adminEmail}`,
     `ADMIN_PASSWORD=${adminPassword}`,
     "",
-    "# ── Hébergement d'images (Firebase Storage, plan Blaze requis) ─────",
-    "# Valeur initiale du réglage : modifiable ensuite depuis /admin/settings.",
+    "# ── Réglages initiaux du site (appliqués par /api/bootstrap-admin, ─",
+    "# ── modifiables ensuite depuis /admin/settings, sans redéploiement) ─",
     `ENABLE_IMAGES=${imagesEnabled}`,
+    `SITE_THEME=${theme}`,
+    `SITE_LANGUAGE=${language}`,
     "",
     "# ── Netlify Functions (secret serveur, à compléter à la main) ──────",
     "# Console Firebase → Paramètres → Comptes de service → Générer une clé",

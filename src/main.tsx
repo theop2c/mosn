@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { isConfigured } from "./lib/firebase";
 import { Install } from "./pages/Install";
 import "./index.css";
+import "./styles/themes/index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

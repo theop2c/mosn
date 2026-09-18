@@ -1,76 +1,97 @@
 import { useState } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
+import { THEMES } from "../../lib/themes";
+import { LANGUAGES } from "../../i18n";
 import { useAuth } from "../../context/AuthContext";
 import { AdminTabs } from "../../components/AdminTabs";
 
 export function AdminSettings() {
-  const { settings } = useAuth();
+  const { settings, t } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
-  async function toggleImages(enabled: boolean) {
+  async function save(fields: Record<string, unknown>) {
     setError(null);
     try {
-      await setDoc(
-        doc(db, "settings", "app"),
-        { imagesEnabled: enabled },
-        { merge: true },
-      );
+      await setDoc(doc(db, "settings", "app"), fields, { merge: true });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur");
+      setError(err instanceof Error ? err.message : t.common.error);
     }
   }
 
   return (
     <div>
       <AdminTabs />
-      <h1>Paramètres du site</h1>
+      <h1>{t.admin.settingsTitle}</h1>
+      {error && <p className="error">{error}</p>}
+
+      <div className="card">
+        <h2>{t.admin.designTitle}</h2>
+        <p className="hint">{t.admin.designHint}</p>
+        <div className="theme-grid">
+          {THEMES.map((theme) => (
+            <button
+              key={theme.id}
+              type="button"
+              className={`theme-swatch ${
+                settings.theme === theme.id ? "selected" : ""
+              }`}
+              onClick={() => save({ theme: theme.id })}
+            >
+              <span className="swatches">
+                {theme.preview.map((color) => (
+                  <span key={color} style={{ background: color }} />
+                ))}
+              </span>
+              {theme.label}
+              {settings.theme === theme.id && " ✓"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <h2>{t.admin.languageTitle}</h2>
+        <p className="hint">{t.admin.languageHint}</p>
+        <div className="theme-grid">
+          {LANGUAGES.map((language) => (
+            <button
+              key={language.id}
+              type="button"
+              className={`theme-swatch ${
+                settings.language === language.id ? "selected" : ""
+              }`}
+              onClick={() => save({ language: language.id })}
+            >
+              {language.label}
+              {settings.language === language.id && " ✓"}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="card">
         <label className="toggle">
           <input
             type="checkbox"
             checked={settings.imagesEnabled}
-            onChange={(e) => toggleImages(e.target.checked)}
+            onChange={(e) => save({ imagesEnabled: e.target.checked })}
           />
           <span>
-            <strong>Hébergement d'images (Firebase Storage)</strong>
+            <strong>{t.admin.imagesTitle}</strong>
             <br />
-            Permet aux utilisateurs de joindre une image à leurs posts.
+            {t.admin.imagesDesc}
           </span>
         </label>
-        {error && <p className="error">{error}</p>}
 
         <div className="notice">
-          <p>
-            ⚠️ Firebase Storage nécessite le <strong>forfait payant Blaze</strong>{" "}
-            (facturation à l'usage). Avant d'activer cette option :
-          </p>
+          <p>{t.admin.blazeIntro}</p>
           <ol>
-            <li>
-              Console Firebase → ⚙️ en bas à gauche → <strong>Passer au plan
-              Blaze</strong> (carte bancaire requise, facturation à l'usage).
-            </li>
-            <li>
-              <strong>Build → Storage → Commencer</strong> pour créer le
-              bucket.
-            </li>
-            <li>
-              Onglet <strong>Règles</strong> de Storage : copiez-collez le
-              contenu du fichier <code>storage.rules</code> du repo, puis
-              <strong> Publier</strong>.
-            </li>
-            <li>
-              Vérifiez que <code>VITE_FIREBASE_STORAGE_BUCKET</code> est bien
-              renseignée dans les variables Netlify (l'assistant
-              d'installation la remplit automatiquement).
-            </li>
+            {t.admin.blazeSteps.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
           </ol>
-          <p>
-            Le réglage est stocké dans Firestore (<code>settings/app</code>) :
-            il s'applique <strong>immédiatement</strong>, sans redéploiement,
-            et vous pouvez le désactiver à tout moment.
-          </p>
+          <p>{t.admin.blazeOutro}</p>
         </div>
       </div>
     </div>

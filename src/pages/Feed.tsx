@@ -17,7 +17,7 @@ import type { Post } from "../types";
 type Tab = "all" | "following";
 
 export function Feed() {
-  const { user } = useAuth();
+  const { user, t } = useAuth();
   const [tab, setTab] = useState<Tab>("all");
   const [posts, setPosts] = useState<Post[]>([]);
   const [followingIds, setFollowingIds] = useState<string[] | null>(null);
@@ -67,7 +67,7 @@ export function Feed() {
       {user ? (
         <PostComposer />
       ) : (
-        <p className="card">Connectez-vous pour publier.</p>
+        <p className="card">{t.feed.signInToPost}</p>
       )}
 
       {user && (
@@ -76,13 +76,13 @@ export function Feed() {
             className={`link ${tab === "all" ? "active" : ""}`}
             onClick={() => setTab("all")}
           >
-            Tout
+            {t.feed.tabAll}
           </button>
           <button
             className={`link ${tab === "following" ? "active" : ""}`}
             onClick={() => setTab("following")}
           >
-            Abonnements
+            {t.feed.tabFollowing}
           </button>
         </nav>
       )}
@@ -92,9 +92,7 @@ export function Feed() {
       ))}
       {posts.length === 0 && (
         <p className="center">
-          {tab === "following"
-            ? "Aucun post de vos abonnements. Suivez des utilisateurs via la recherche !"
-            : "Aucun post pour le moment."}
+          {tab === "following" ? t.feed.emptyFollowing : t.feed.emptyAll}
         </p>
       )}
     </div>

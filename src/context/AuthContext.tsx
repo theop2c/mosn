@@ -14,6 +14,8 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
+import { DEFAULT_THEME } from "../lib/themes";
+import { DEFAULT_LANGUAGE, getLabels, type Labels } from "../i18n";
 import type { AppSettings, UserProfile } from "../types";
 
 interface AuthState {
@@ -22,6 +24,8 @@ interface AuthState {
   isAdmin: boolean;
   loading: boolean;
   settings: AppSettings;
+  /** Labels de la langue active (fichier src/i18n/<langue>.ts). */
+  t: Labels;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -29,7 +33,12 @@ const AuthContext = createContext<AuthState>({
   profile: null,
   isAdmin: false,
   loading: true,
-  settings: { imagesEnabled: false },
+  settings: {
+    imagesEnabled: false,
+    theme: DEFAULT_THEME,
+    language: DEFAULT_LANGUAGE,
+  },
+  t: getLabels(DEFAULT_LANGUAGE),
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -39,14 +48,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<AppSettings>({
     imagesEnabled: false,
+    theme: DEFAULT_THEME,
+    language: DEFAULT_LANGUAGE,
   });
 
   // Paramètres du site (settings/app), modifiables depuis /admin/settings
   useEffect(() => {
     return onSnapshot(doc(db, "settings", "app"), (snap) => {
-      setSettings({ imagesEnabled: snap.data()?.imagesEnabled === true });
+      const data = snap.data();
+      setSettings({
+        imagesEnabled: data?.imagesEnabled === true,
+        theme: typeof data?.theme === "string" ? data.theme : DEFAULT_THEME,
+        language:
+          typeof data?.language === "string" ? data.language : DEFAULT_LANGUAGE,
+      });
     });
   }, []);
+
+  // Applique le design et la langue choisis par l'admin
+  useEffect(() => {
+    document.documentElement.dataset.theme = settings.theme;
+    document.documentElement.lang = settings.language;
+  }, [settings.theme, settings.language]);
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (u) => {
@@ -83,7 +106,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, profile, isAdmin, loading, settings }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        profile,
+        isAdmin,
+        loading,
+        settings,
+        t: getLabels(settings.language),
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

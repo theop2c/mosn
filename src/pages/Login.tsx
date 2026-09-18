@@ -7,12 +7,14 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
+import { useAuth } from "../context/AuthContext";
 
 const siteEnv = import.meta.env.VITE_SITE_ENV;
 // Bouton de connexion anonyme uniquement en environnement dev/test
 const showAnonymous = siteEnv === "dev" || siteEnv === "test";
 
 export function Login() {
+  const { t } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -22,14 +24,14 @@ export function Login() {
   async function handleForgotPassword() {
     setError(null);
     if (!email) {
-      setError("Saisissez d'abord votre email, puis cliquez à nouveau.");
+      setError(t.login.forgotNeedEmail);
       return;
     }
     try {
       await sendPasswordResetEmail(auth, email);
       setResetSent(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de l'envoi");
+      setError(err instanceof Error ? err.message : t.common.error);
     }
   }
 
@@ -40,7 +42,7 @@ export function Login() {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de la connexion");
+      setError(err instanceof Error ? err.message : t.login.failed);
     }
   }
 
@@ -50,7 +52,7 @@ export function Login() {
       await signInWithPopup(auth, googleProvider);
       navigate("/");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de la connexion");
+      setError(err instanceof Error ? err.message : t.login.failed);
     }
   }
 
@@ -62,52 +64,49 @@ export function Login() {
     } catch (err) {
       setError(
         err instanceof Error
-          ? `${err.message} — vérifiez que le fournisseur « Anonyme » est activé dans Firebase Authentication.`
-          : "Échec de la connexion anonyme",
+          ? `${err.message} — ${t.login.anonymousHint}`
+          : t.login.failed,
       );
     }
   }
 
   return (
     <div className="card auth-card">
-      <h1>Connexion</h1>
+      <h1>{t.login.title}</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="email"
-          placeholder="Email"
+          placeholder={t.login.email}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Mot de passe"
+          placeholder={t.login.password}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Se connecter</button>
+        <button type="submit">{t.login.submit}</button>
       </form>
       <button className="link" onClick={handleForgotPassword}>
-        {resetSent ? "Email de réinitialisation envoyé ✓" : "Mot de passe oublié ?"}
+        {resetSent ? t.login.forgotSent : t.login.forgot}
       </button>
       <button className="secondary" onClick={handleGoogle}>
-        Continuer avec Google
+        {t.login.google}
       </button>
       {showAnonymous && (
         <>
           <button className="secondary" onClick={handleAnonymous}>
-            Connexion anonyme ({siteEnv})
+            {t.login.anonymous(siteEnv ?? "dev")}
           </button>
-          <p className="hint">
-            Visible uniquement en dev/test. Nécessite le fournisseur
-            « Anonyme » activé dans Firebase Authentication.
-          </p>
+          <p className="hint">{t.login.anonymousHint}</p>
         </>
       )}
       {error && <p className="error">{error}</p>}
       <p>
-        Pas de compte ? <Link to="/register">Créer un compte</Link>
+        {t.login.noAccount} <Link to="/register">{t.login.createAccount}</Link>
       </p>
     </div>
   );

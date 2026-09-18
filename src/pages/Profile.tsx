@@ -14,7 +14,7 @@ import type { UserProfile } from "../types";
 
 export function Profile() {
   const { uid } = useParams<{ uid: string }>();
-  const { user } = useAuth();
+  const { user, t } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [counts, setCounts] = useState<{ followers: number; following: number }>();
   const [bio, setBio] = useState("");
@@ -52,19 +52,22 @@ export function Profile() {
     setTimeout(() => setSaved(false), 2000);
   }
 
-  if (!profile) return <p className="center">Profil introuvable.</p>;
+  if (!profile) return <p className="center">{t.profile.notFound}</p>;
 
   return (
     <div className="card">
       <div className="row">
         <div>
           <h1>{profile.displayName}</h1>
-          {profile.role === "admin" && <span className="badge">admin</span>}
-          {profile.banned && <span className="badge danger">banni</span>}
+          {profile.role === "admin" && (
+            <span className="badge">{t.profile.badgeAdmin}</span>
+          )}
+          {profile.banned && (
+            <span className="badge danger">{t.profile.badgeBanned}</span>
+          )}
           {counts && (
             <p className="hint">
-              {counts.followers} abonné{counts.followers > 1 ? "s" : ""} ·{" "}
-              {counts.following} abonnement{counts.following > 1 ? "s" : ""}
+              {t.profile.stats(counts.followers, counts.following)}
             </p>
           )}
         </div>
@@ -72,7 +75,7 @@ export function Profile() {
           <div className="row-actions">
             <FollowButton targetUid={uid} />
             <Link to={`/messages/${uid}`} className="button-link secondary">
-              Message
+              {t.profile.message}
             </Link>
           </div>
         )}
@@ -82,14 +85,16 @@ export function Profile() {
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            placeholder="Votre bio…"
+            placeholder={t.profile.bioPlaceholder}
             maxLength={300}
             rows={3}
           />
-          <button type="submit">{saved ? "Enregistré ✓" : "Enregistrer"}</button>
+          <button type="submit">
+            {saved ? t.common.saved : t.common.save}
+          </button>
         </form>
       ) : (
-        <p>{profile.bio || "Pas de bio."}</p>
+        <p>{profile.bio || t.profile.noBio}</p>
       )}
     </div>
   );

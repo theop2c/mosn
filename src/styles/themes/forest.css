@@ -1,0 +1,23 @@
+/* Design « Forêt » — verts naturels, apaisant. */
+:root[data-theme="forest"] {
+  --primary: #16a34a;
+  --primary-contrast: #ffffff;
+  --bg: #f1f7f2;
+  --surface: #ffffff;
+  --text: #16241a;
+  --muted: #64766a;
+  --border: #d3e5d6;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="forest"] {
+    --primary: #4ade80;
+    --primary-contrast: #082b14;
+    --bg: #0e1a12;
+    --surface: #16271c;
+    --text: #ddeee1;
+    --muted: #8aa892;
+    --border: #24402c;
+  }
+}

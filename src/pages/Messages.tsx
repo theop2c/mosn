@@ -13,7 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import type { Conversation } from "../types";
 
 export function Messages() {
-  const { user } = useAuth();
+  const { user, t } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
   useEffect(() => {
@@ -35,11 +35,12 @@ export function Messages() {
 
   return (
     <div>
-      <h1>Messages</h1>
+      <h1>{t.messages.title}</h1>
       {conversations.length === 0 && (
         <p className="center">
-          Aucune conversation. Trouvez quelqu'un via la{" "}
-          <Link to="/search">recherche</Link> et envoyez-lui un message.
+          {t.messages.emptyBefore}{" "}
+          <Link to="/search">{t.messages.searchLink}</Link>{" "}
+          {t.messages.emptyAfter}
         </p>
       )}
       {conversations.map((conv) => {
@@ -53,7 +54,7 @@ export function Messages() {
           >
             <div>
               <span className="author">
-                {conv.participantNames?.[otherUid] ?? "Utilisateur"}
+                {conv.participantNames?.[otherUid] ?? t.common.user}
               </span>
               {conv.lastMessage && <p className="hint">{conv.lastMessage}</p>}
             </div>

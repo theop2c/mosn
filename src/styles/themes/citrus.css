@@ -1,0 +1,23 @@
+/* Design « Agrumes » — jaune-vert acidulé, très arrondi et joueur. */
+:root[data-theme="citrus"] {
+  --primary: #65a30d;
+  --primary-contrast: #ffffff;
+  --bg: #fefce8;
+  --surface: #ffffff;
+  --text: #27290f;
+  --muted: #7d7f5c;
+  --border: #e8e5b0;
+  --radius: 18px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="citrus"] {
+    --primary: #a3e635;
+    --primary-contrast: #1a2e05;
+    --bg: #141804;
+    --surface: #1f240b;
+    --text: #eef2d8;
+    --muted: #a4a883;
+    --border: #39401c;
+  }
+}
