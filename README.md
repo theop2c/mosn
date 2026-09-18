@@ -239,6 +239,7 @@ Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
 | `7 PERMISSION_DENIED` | Cloud Firestore API désactivée | Activez-la (voir [Prérequis](#0-prérequis-google-cloud--activer-lapi-firestore)) |
 | `Bootstrap désactivé` | `ADMIN_EMAIL` / `ADMIN_PASSWORD` absents | Renseignez-les dans les variables Netlify puis redéployez |
 | `auth/unauthorized-domain` (côté site, à la connexion Google) | Domaine Netlify non autorisé dans Firebase Auth | **Authentication → Settings → Domaines autorisés → Ajouter un domaine** (ex. `mosn-dev.netlify.app`) |
+| `auth/operation-not-allowed` (côté site, à la connexion) | Le fournisseur utilisé n'est pas activé (le compte admin, lui, a pu être créé par le SDK admin) | **Authentication → Sign-in method** → activez **E-mail/Mot de passe** (et Google, Anonyme si besoin) |
 
 Après tout changement de variable d'environnement : **Deploys → Trigger
 deploy** (les variables sont figées au moment du build/déploiement).
