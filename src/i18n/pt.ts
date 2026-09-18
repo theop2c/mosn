@@ -90,6 +90,11 @@ export const pt: Labels = {
       `${followers} seguidor${followers === 1 ? "" : "es"} · a seguir ${following}`,
     badgeAdmin: "admin",
     badgeBanned: "banido",
+    tabAbout: "Sobre",
+    memberSince: "Membro desde",
+    postsCount: (n: number) =>
+      `${n} publicaç${n === 1 ? "ão" : "ões"}`,
+    editBio: "Editar bio",
   },
   search: {
     title: "Pesquisar utilizadores",

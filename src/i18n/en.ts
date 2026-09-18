@@ -89,6 +89,10 @@ export const en: Labels = {
       `${followers} follower${followers === 1 ? "" : "s"} · ${following} following`,
     badgeAdmin: "admin",
     badgeBanned: "banned",
+    tabAbout: "About",
+    memberSince: "Member since",
+    postsCount: (n: number) => `${n} post${n === 1 ? "" : "s"}`,
+    editBio: "Edit bio",
   },
   search: {
     title: "Search users",

@@ -90,6 +90,10 @@ export const ko: Labels = {
       `팔로워 ${followers}명 · 팔로잉 ${following}명`,
     badgeAdmin: "관리자",
     badgeBanned: "차단됨",
+    tabAbout: "소개",
+    memberSince: "가입일",
+    postsCount: (n: number) => `게시물 ${n}개`,
+    editBio: "소개 수정",
   },
   search: {
     title: "사용자 검색",

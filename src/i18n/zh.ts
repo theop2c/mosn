@@ -89,6 +89,10 @@ export const zh: Labels = {
       `${followers} 位粉丝 · 关注 ${following} 人`,
     badgeAdmin: "管理员",
     badgeBanned: "已封禁",
+    tabAbout: "关于",
+    memberSince: "加入时间",
+    postsCount: (n: number) => `${n} 条帖子`,
+    editBio: "编辑简介",
   },
   search: {
     title: "搜索用户",

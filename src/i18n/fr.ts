@@ -89,6 +89,10 @@ export const fr = {
       `${followers} abonné${followers > 1 ? "s" : ""} · ${following} abonnement${following > 1 ? "s" : ""}`,
     badgeAdmin: "admin",
     badgeBanned: "banni",
+    tabAbout: "À propos",
+    memberSince: "Membre depuis",
+    postsCount: (n: number) => `${n} post${n > 1 ? "s" : ""}`,
+    editBio: "Modifier la bio",
   },
   search: {
     title: "Rechercher des utilisateurs",

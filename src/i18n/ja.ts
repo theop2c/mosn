@@ -90,6 +90,10 @@ export const ja: Labels = {
       `フォロワー ${followers} 人 · フォロー中 ${following} 人`,
     badgeAdmin: "管理者",
     badgeBanned: "凍結中",
+    tabAbout: "概要",
+    memberSince: "登録日",
+    postsCount: (n: number) => `投稿 ${n} 件`,
+    editBio: "自己紹介を編集",
   },
   search: {
     title: "ユーザーを検索",
