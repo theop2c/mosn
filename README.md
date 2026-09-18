@@ -33,7 +33,12 @@ pour une petite communauté).
 
 ## Fonctionnalités du squelette
 
-- Inscription / connexion (email + mot de passe, Google)
+- **Assistant d'installation intégré** : au premier déploiement, le site
+  affiche un formulaire (nom du site, environnement, compte admin, collage
+  de la config Firebase) et génère le `.env` — voir
+  [Installation](#installation)
+- Inscription / connexion (email + mot de passe, Google) ; en environnement
+  `dev`/`test`, bouton de connexion anonyme (Firebase Anonymous Auth)
 - Fil public temps réel, création/suppression de posts, profils avec bio
 - Signalement de contenus (`/api/report`)
 - **Panneau d'admin** (`/admin`) : liste des comptes, promotion/rétrogradation
@@ -94,33 +99,51 @@ pour une petite communauté).
 6. **Paramètres → Comptes de service → Générer une clé privée** : copiez le
    JSON (sur une ligne) dans `FIREBASE_SERVICE_ACCOUNT`.
 
-### 2. En local
-
-```bash
-cp .env.example .env   # puis remplissez les valeurs
-npm install
-npm run dev            # netlify dev : Vite + Functions sur http://localhost:8888
-```
-
-### 3. Sur Netlify
+### 2. Sur Netlify — avec l'assistant d'installation intégré
 
 1. Importez le repo sur [app.netlify.com](https://app.netlify.com) — le
-   `netlify.toml` configure build, publish et functions.
-2. Déclarez les variables d'environnement (`VITE_FIREBASE_*`,
-   `FIREBASE_SERVICE_ACCOUNT`, `ADMIN_BOOTSTRAP_SECRET`).
-3. Ajoutez le domaine Netlify dans **Firebase Auth → Domaines autorisés**.
+   `netlify.toml` configure build, publish et functions. Déployez tel quel,
+   **sans déclarer aucune variable**.
+2. Ouvrez le site : comme il n'est pas encore configuré, **l'assistant
+   d'installation s'affiche automatiquement**. Il vous demande :
+   - le **nom du site** ;
+   - l'**environnement** (`test` / `dev` / `preprod` / `production`) —
+     en dev/test, la page de connexion affichera en plus un bouton de
+     **connexion anonyme** (pensez à activer le fournisseur « Anonyme »
+     dans Firebase Authentication) ;
+   - l'**email et le mot de passe de l'administrateur** ;
+   - le bloc `const firebaseConfig = { … }` **copié-collé tel quel**
+     depuis la console Firebase — l'assistant le parse pour vous.
+3. L'assistant génère le fichier `.env` (téléchargement ou copie). Collez
+   son contenu dans **Site configuration → Environment variables → Add a
+   variable → Import from a .env file**, complétez
+   `FIREBASE_SERVICE_ACCOUNT` (clé de compte de service, JSON sur une
+   ligne), puis **Deploys → Trigger deploy**.
+4. Ajoutez le domaine Netlify dans **Firebase Auth → Domaines autorisés**.
 
-### 4. Premier admin
+### 3. Compte administrateur — sans commande console
 
-Créez votre compte via l'UI, puis :
+Ouvrez simplement dans votre navigateur :
 
-```bash
-curl -X POST https://VOTRE-SITE.netlify.app/api/bootstrap-admin -H "content-type: application/json" -d "{\"secret\":\"VOTRE_ADMIN_BOOTSTRAP_SECRET\",\"email\":\"vous@exemple.com\"}"
+```text
+https://VOTRE-SITE.netlify.app/api/bootstrap-admin
 ```
 
-Déconnectez/reconnectez-vous pour rafraîchir le token, puis **supprimez
-`ADMIN_BOOTSTRAP_SECRET`** des variables d'environnement. Les admins
-suivants se gèrent depuis `/admin/users`.
+Le compte admin est créé à partir de `ADMIN_EMAIL` / `ADMIN_PASSWORD`
+(l'appel est idempotent : si le compte existe déjà, il est promu admin sans
+toucher au mot de passe). **Supprimez ensuite `ADMIN_PASSWORD`** des
+variables d'environnement. Les admins suivants se gèrent depuis
+`/admin/users`.
+
+### 4. En local
+
+```bash
+npm install
+npm run setup   # assistant en ligne de commande : écrit le fichier .env
+npm run dev     # netlify dev : Vite + Functions sur http://localhost:8888
+```
+
+Puis ouvrez `http://localhost:8888/api/bootstrap-admin` pour créer l'admin.
 
 ## API (Netlify Functions)
 
@@ -131,7 +154,7 @@ suivants se gèrent depuis `/admin/users`.
 | `/api/admin/set-role` | POST | admin | Donner/retirer le rôle admin |
 | `/api/admin/ban-user` | POST | admin | Bannir/débannir (désactive le compte) |
 | `/api/admin/delete-post` | POST | admin | Supprimer un post + commentaires |
-| `/api/bootstrap-admin` | POST | secret env | Promouvoir le premier admin |
+| `/api/bootstrap-admin` | GET/POST | env | Créer/promouvoir l'admin depuis `ADMIN_EMAIL`/`ADMIN_PASSWORD` |
 
 ## Et les images ? (Firebase Storage)
 

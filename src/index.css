@@ -111,7 +111,8 @@ form {
 }
 
 input,
-textarea {
+textarea,
+select {
   padding: 0.6rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -224,6 +225,74 @@ button.danger:not(.link) {
 
 .badge.danger {
   background: var(--danger);
+}
+
+.badge.env {
+  background: #d97706;
+  text-transform: uppercase;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0.2rem 0 0;
+}
+
+.notice {
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* ── Assistant d'installation ─────────────────────────────────────── */
+.install {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.install label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.install label input,
+.install label select,
+.install label textarea {
+  font-weight: 400;
+}
+
+.env-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  overflow-x: auto;
+  font-size: 0.8rem;
+}
+
+.install-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.install-actions .secondary {
+  margin-top: 0;
+  width: auto;
+}
+
+.install ol {
+  padding-left: 1.2rem;
+  line-height: 1.6;
 }
 
 .error {

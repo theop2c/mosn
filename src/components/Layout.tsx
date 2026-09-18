@@ -3,6 +3,9 @@ import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useAuth } from "../context/AuthContext";
 
+const siteName = import.meta.env.VITE_SITE_NAME || "MOSN";
+const siteEnv = import.meta.env.VITE_SITE_ENV;
+
 export function Layout() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -16,8 +19,11 @@ export function Layout() {
     <div className="app">
       <header className="topbar">
         <Link to="/" className="brand">
-          MOSN
+          {siteName}
         </Link>
+        {siteEnv && siteEnv !== "production" && (
+          <span className="badge env">{siteEnv}</span>
+        )}
         <nav>
           <NavLink to="/">Fil</NavLink>
           {user && <NavLink to={`/u/${user.uid}`}>Profil</NavLink>}
