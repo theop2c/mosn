@@ -184,7 +184,14 @@ Dans l'ordre :
    son **contenu complet** (il commence par `{`) comme valeur — pas
    l'email du compte de service ni le nom du fichier. La version base64
    du JSON est aussi acceptée. Terminez par **Deploys → Trigger deploy**.
-4. Ajoutez le domaine Netlify dans **Firebase Auth → Domaines autorisés**.
+4. **Autorisez le domaine Netlify dans Firebase Auth** — indispensable,
+   sinon la connexion Google (et les autres méthodes par popup/redirect)
+   échoue avec l'erreur `auth/unauthorized-domain` :
+   console Firebase → **Authentication → onglet Settings (Paramètres) →
+   Domaines autorisés → Ajouter un domaine**, puis saisissez le domaine de
+   votre site Netlify (ex. `mosn-dev.netlify.app`, sans `https://`).
+   Si vous ajoutez plus tard un domaine personnalisé sur Netlify,
+   ajoutez-le ici aussi.
 
 ### 3. Compte administrateur — sans commande console
 
@@ -231,6 +238,7 @@ Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
 | `5 NOT_FOUND` | La base Firestore n'existe pas dans le projet | Console Firebase → **Firestore Database → Créer une base de données**. Si la base a un ID personnalisé (créée hors console Firebase), définissez `FIRESTORE_DATABASE_ID` |
 | `7 PERMISSION_DENIED` | Cloud Firestore API désactivée | Activez-la (voir [Prérequis](#0-prérequis-google-cloud--activer-lapi-firestore)) |
 | `Bootstrap désactivé` | `ADMIN_EMAIL` / `ADMIN_PASSWORD` absents | Renseignez-les dans les variables Netlify puis redéployez |
+| `auth/unauthorized-domain` (côté site, à la connexion Google) | Domaine Netlify non autorisé dans Firebase Auth | **Authentication → Settings → Domaines autorisés → Ajouter un domaine** (ex. `mosn-dev.netlify.app`) |
 
 Après tout changement de variable d'environnement : **Deploys → Trigger
 deploy** (les variables sont figées au moment du build/déploiement).
