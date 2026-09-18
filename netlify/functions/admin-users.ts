@@ -1,9 +1,9 @@
 import type { Config } from "@netlify/functions";
 import { adminAuth } from "./_shared/firebase.js";
-import { json, requireAdmin } from "./_shared/auth.js";
+import { json, requireAdmin, safe } from "./_shared/auth.js";
 
 /** GET /api/admin/users — liste paginée des comptes (admin uniquement). */
-export default async (req: Request) => {
+export default safe(async (req: Request) => {
   if (req.method !== "GET") return json(405, { error: "Method not allowed" });
 
   const admin = await requireAdmin(req);
@@ -23,6 +23,6 @@ export default async (req: Request) => {
     })),
     nextPageToken: page.pageToken ?? null,
   });
-};
+});
 
 export const config: Config = { path: "/api/admin/users" };

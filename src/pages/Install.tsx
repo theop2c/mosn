@@ -86,8 +86,13 @@ export function Install() {
           </li>
           <li>
             Complétez à la main <code>FIREBASE_SERVICE_ACCOUNT</code> :
-            console Firebase → Paramètres → Comptes de service → Générer une
-            clé privée (JSON sur une seule ligne).
+            console Firebase → Paramètres → <strong>Comptes de service</strong>{" "}
+            → <strong>Générer une nouvelle clé privée</strong>. Ouvrez le
+            fichier <code>.json</code> téléchargé et collez son{" "}
+            <strong>contenu complet</strong> (il commence par{" "}
+            <code>{"{"}</code>) comme valeur de la variable, directement dans
+            l'interface Netlify — pas l'email du compte, pas le nom du
+            fichier. La version encodée en base64 est aussi acceptée.
           </li>
           <li>
             Relancez un déploiement : <strong>Deploys → Trigger deploy →

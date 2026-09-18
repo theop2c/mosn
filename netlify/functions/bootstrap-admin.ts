@@ -1,6 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { adminAuth, adminDb } from "./_shared/firebase.js";
-import { json } from "./_shared/auth.js";
+import { json, safe } from "./_shared/auth.js";
 
 /**
  * Création du compte administrateur à partir des variables d'environnement
@@ -13,7 +13,7 @@ import { json } from "./_shared/auth.js";
  * ici (tout vient de l'environnement). Supprimez ADMIN_PASSWORD des
  * variables une fois l'admin créé.
  */
-export default async (req: Request) => {
+export default safe(async (req: Request) => {
   if (req.method !== "GET" && req.method !== "POST") {
     return json(405, { error: "Method not allowed" });
   }
@@ -56,6 +56,6 @@ export default async (req: Request) => {
       ? "Compte admin créé. Supprimez ADMIN_PASSWORD des variables d'environnement, puis connectez-vous."
       : "Ce compte est (déjà) admin. Mot de passe inchangé.",
   });
-};
+});
 
 export const config: Config = { path: "/api/bootstrap-admin" };

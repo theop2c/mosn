@@ -9,6 +9,25 @@ export function json(status: number, body: unknown): Response {
 }
 
 /**
+ * Enveloppe un handler pour renvoyer les erreurs en JSON lisible
+ * (configuration manquante, etc.) au lieu de la page de crash Netlify.
+ */
+export function safe(
+  handler: (req: Request) => Promise<Response>,
+): (req: Request) => Promise<Response> {
+  return async (req) => {
+    try {
+      return await handler(req);
+    } catch (err) {
+      console.error(err);
+      return json(500, {
+        error: err instanceof Error ? err.message : "Erreur interne",
+      });
+    }
+  };
+}
+
+/**
  * Vérifie le header `Authorization: Bearer <idToken>` et renvoie le token
  * décodé, ou null si absent/invalide.
  */

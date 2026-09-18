@@ -1,9 +1,9 @@
 import type { Config } from "@netlify/functions";
 import { adminAuth, adminDb } from "./_shared/firebase.js";
-import { json, requireAdmin } from "./_shared/auth.js";
+import { json, requireAdmin, safe } from "./_shared/auth.js";
 
 /** POST /api/admin/set-role { uid, admin: boolean } — promeut/rétrograde un admin. */
-export default async (req: Request) => {
+export default safe(async (req: Request) => {
   if (req.method !== "POST") return json(405, { error: "Method not allowed" });
 
   const caller = await requireAdmin(req);
@@ -23,6 +23,6 @@ export default async (req: Request) => {
     .set({ role: body.admin ? "admin" : "user" }, { merge: true });
 
   return json(200, { ok: true });
-};
+});
 
 export const config: Config = { path: "/api/admin/set-role" };

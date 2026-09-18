@@ -127,9 +127,13 @@ pour une petite communauté).
      depuis la console Firebase — l'assistant le parse pour vous.
 3. L'assistant génère le fichier `.env` (téléchargement ou copie). Collez
    son contenu dans **Site configuration → Environment variables → Add a
-   variable → Import from a .env file**, complétez
-   `FIREBASE_SERVICE_ACCOUNT` (clé de compte de service, JSON sur une
-   ligne), puis **Deploys → Trigger deploy**.
+   variable → Import from a .env file**, puis complétez
+   `FIREBASE_SERVICE_ACCOUNT` **directement dans l'interface Netlify** :
+   console Firebase → Paramètres → **Comptes de service** → **Générer une
+   nouvelle clé privée**, ouvrez le fichier `.json` téléchargé et collez
+   son **contenu complet** (il commence par `{`) comme valeur — pas
+   l'email du compte de service ni le nom du fichier. La version base64
+   du JSON est aussi acceptée. Terminez par **Deploys → Trigger deploy**.
 4. Ajoutez le domaine Netlify dans **Firebase Auth → Domaines autorisés**.
 
 ### 3. Compte administrateur — sans commande console
