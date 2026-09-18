@@ -204,6 +204,20 @@ Puis ouvrez `http://localhost:8888/api/bootstrap-admin` pour créer l'admin.
 | `/api/admin/delete-post` | POST | admin | Supprimer un post + commentaires |
 | `/api/bootstrap-admin` | GET/POST | env | Créer/promouvoir l'admin depuis `ADMIN_EMAIL`/`ADMIN_PASSWORD` |
 
+## Dépannage des fonctions (`/api/*`)
+
+Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
+
+| Erreur | Cause | Solution |
+| --- | --- | --- |
+| `FIREBASE_SERVICE_ACCOUNT est absente` / `n'est pas un JSON valide` | La variable ne contient pas le JSON du compte de service | Collez le **contenu complet** du fichier `.json` téléchargé (il commence par `{`), ou sa version base64 |
+| `5 NOT_FOUND` | La base Firestore n'existe pas dans le projet | Console Firebase → **Firestore Database → Créer une base de données**. Si la base a un ID personnalisé (créée hors console Firebase), définissez `FIRESTORE_DATABASE_ID` |
+| `7 PERMISSION_DENIED` | Cloud Firestore API désactivée | Activez-la (voir [Prérequis](#0-prérequis-google-cloud--activer-lapi-firestore)) |
+| `Bootstrap désactivé` | `ADMIN_EMAIL` / `ADMIN_PASSWORD` absents | Renseignez-les dans les variables Netlify puis redéployez |
+
+Après tout changement de variable d'environnement : **Deploys → Trigger
+deploy** (les variables sont figées au moment du build/déploiement).
+
 ## Et les images ? (Firebase Storage)
 
 Le squelette est volontairement **100 % texte** pour rester entièrement

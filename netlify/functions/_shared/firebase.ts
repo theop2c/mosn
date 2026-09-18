@@ -61,4 +61,9 @@ function app() {
 }
 
 export const adminAuth = () => getAuth(app());
-export const adminDb = () => getFirestore(app());
+// FIRESTORE_DATABASE_ID : à définir uniquement si votre base Firestore a un
+// ID personnalisé (créée hors console Firebase) ; sinon "(default)".
+export const adminDb = () => {
+  const databaseId = process.env.FIRESTORE_DATABASE_ID;
+  return databaseId ? getFirestore(app(), databaseId) : getFirestore(app());
+};

@@ -20,9 +20,28 @@ export function safe(
       return await handler(req);
     } catch (err) {
       console.error(err);
-      return json(500, {
-        error: err instanceof Error ? err.message : "Erreur interne",
-      });
+      const message = err instanceof Error ? err.message : "Erreur interne";
+      // Erreurs gRPC Firestore courantes, traduites en conseils actionnables
+      if (/\b5 NOT_FOUND\b/.test(message)) {
+        return json(500, {
+          error:
+            "Firestore répond NOT_FOUND : la base de données n'existe pas dans ce projet. " +
+            "Console Firebase → Firestore Database → « Créer une base de données » (mode production). " +
+            "Si vous l'avez créée avec un ID personnalisé (autre que « (default) »), définissez la " +
+            "variable d'environnement FIRESTORE_DATABASE_ID avec cet ID. Vérifiez aussi que le compte " +
+            "de service appartient bien au même projet Firebase que le site.",
+          detail: message,
+        });
+      }
+      if (/\b7 PERMISSION_DENIED\b/.test(message)) {
+        return json(500, {
+          error:
+            "Firestore répond PERMISSION_DENIED : activez la « Cloud Firestore API » pour ce projet " +
+            "sur https://console.cloud.google.com/apis/library/firestore.googleapis.com puis réessayez.",
+          detail: message,
+        });
+      }
+      return json(500, { error: message });
     }
   };
 }
