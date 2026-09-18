@@ -6,7 +6,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/mosn"
+    "url": "https://github.com/theop2c/mosn"
   },
   "scripts": {
     "dev": "netlify dev",

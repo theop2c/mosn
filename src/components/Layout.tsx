@@ -36,7 +36,7 @@ export function Layout() {
       </main>
       <footer className="footer">
         <a
-          href="https://github.com/your-org/mosn"
+          href="https://github.com/theop2c/mosn"
           target="_blank"
           rel="noreferrer"
         >
