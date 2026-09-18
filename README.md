@@ -80,6 +80,24 @@ pour une petite communauté).
 
 ## Installation
 
+### 0. Prérequis Google Cloud : activer l'API Firestore
+
+Les Netlify Functions parlent à Firestore via `firebase-admin`, qui passe
+par l'API Google Cloud. Il faut donc que la **Google Cloud Firestore API**
+soit activée pour votre projet, sinon les fonctions échoueront avec une
+erreur `PERMISSION_DENIED` :
+
+1. Ouvrez [console.cloud.google.com](https://console.cloud.google.com) et
+   sélectionnez le **même projet** que votre projet Firebase (ils sont
+   liés : un projet Firebase *est* un projet Google Cloud).
+2. **API et services → Bibliothèque**, recherchez
+   **« Cloud Firestore API »** et cliquez sur **Activer**.
+   (Lien direct : `https://console.cloud.google.com/apis/library/firestore.googleapis.com`.)
+
+En général, créer la base Firestore depuis la console Firebase l'active
+automatiquement — mais si vos fonctions renvoient une erreur d'API
+désactivée, c'est ici que ça se règle.
+
 ### 1. Firebase (plan Spark)
 
 1. Créez un projet sur [console.firebase.google.com](https://console.firebase.google.com).
@@ -106,9 +124,24 @@ pour une petite communauté).
    npx firebase-tools deploy --only firestore
    ```
 5. **Paramètres du projet → Vos applications** : créez une app Web et copiez
-   la config dans les variables `VITE_FIREBASE_*`.
-6. **Paramètres → Comptes de service → Générer une clé privée** : copiez le
-   JSON (sur une ligne) dans `FIREBASE_SERVICE_ACCOUNT`.
+   la config dans les variables `VITE_FIREBASE_*` (l'assistant
+   d'installation le fait pour vous, voir plus bas).
+6. **Récupérez la clé du compte de service** — indispensable pour les
+   Netlify Functions (admin, bannissement, modération) :
+   1. Console Firebase → ⚙️ **Paramètres du projet** → onglet
+      **Comptes de service** ;
+   2. cliquez sur **Générer une nouvelle clé privée** → un fichier
+      `.json` se télécharge ;
+   3. ouvrez ce fichier et copiez son **contenu complet** (il commence
+      par `{` et contient `"private_key"`) ;
+   4. dans **Netlify → Site configuration → Environment variables**,
+      créez la variable `FIREBASE_SERVICE_ACCOUNT` et collez ce JSON
+      comme valeur (la version encodée en base64 est aussi acceptée).
+
+   ⚠️ Ce JSON donne un accès administrateur complet à votre projet
+   Firebase : ne le committez jamais dans le repo, il ne doit vivre que
+   dans les variables d'environnement de Netlify (ou votre `.env` local,
+   qui est ignoré par git).
 
 ### 2. Sur Netlify — avec l'assistant d'installation intégré
 
