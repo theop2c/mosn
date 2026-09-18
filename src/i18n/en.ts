@@ -55,6 +55,8 @@ export const en: Labels = {
     emptyAll: "No posts yet.",
     emptyFollowing: "No posts from people you follow. Find users via search!",
     signInToView: "Sign in to see the posts.",
+    searchPlaceholder: "Search: name, #hashtag or text (regex)…",
+    noMatches: "No posts match your search.",
   },
   composer: {
     publish: "Post",

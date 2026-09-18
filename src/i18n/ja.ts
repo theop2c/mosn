@@ -56,6 +56,8 @@ export const ja: Labels = {
     emptyFollowing:
       "フォロー中のユーザーの投稿はまだありません。検索でユーザーを見つけましょう！",
     signInToView: "投稿を見るにはログインしてください。",
+    searchPlaceholder: "検索：名前、#ハッシュタグ、テキスト（正規表現）…",
+    noMatches: "検索に一致する投稿はありません。",
   },
   composer: {
     publish: "投稿",

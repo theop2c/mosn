@@ -55,6 +55,8 @@ export const zh: Labels = {
     emptyAll: "还没有任何帖子。",
     emptyFollowing: "你关注的人还没有发帖。快去搜索找人关注吧！",
     signInToView: "登录后即可查看帖子。",
+    searchPlaceholder: "搜索：用户名、#话题 或文本（正则）…",
+    noMatches: "没有符合搜索条件的帖子。",
   },
   composer: {
     publish: "发布",

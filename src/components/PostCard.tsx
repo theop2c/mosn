@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -8,6 +8,23 @@ import { Avatar } from "./Avatar";
 import { Comments } from "./Comments";
 import { Reactions } from "./Reactions";
 import type { Post } from "../types";
+
+/** Rend le texte avec les #hashtags cliquables (recherche du fil). */
+function renderText(text: string): ReactNode[] {
+  return text.split(/(#[\p{L}\p{N}_]+)/gu).map((part, index) =>
+    part.startsWith("#") ? (
+      <Link
+        key={index}
+        to={`/?q=${encodeURIComponent(part)}`}
+        className="hashtag"
+      >
+        {part}
+      </Link>
+    ) : (
+      part
+    ),
+  );
+}
 
 export function PostCard({ post }: { post: Post }) {
   const { user, isAdmin, t } = useAuth();
@@ -45,24 +62,8 @@ export function PostCard({ post }: { post: Post }) {
             <time>{date}</time>
           </span>
         </Link>
-        <span className="post-menu">
-          {(isOwner || isAdmin) && (
-            <button className="link danger" onClick={handleDelete}>
-              {t.post.delete}
-            </button>
-          )}
-          {user && !isOwner && (
-            <button
-              className="link"
-              onClick={handleReport}
-              disabled={reported}
-            >
-              {reported ? t.post.reported : t.post.report}
-            </button>
-          )}
-        </span>
       </header>
-      <p className="post-text">{post.text}</p>
+      <p className="post-text">{renderText(post.text)}</p>
       {images.length > 0 && (
         <div className="post-images">
           {images.map((url) => (
@@ -71,7 +72,34 @@ export function PostCard({ post }: { post: Post }) {
         </div>
       )}
       <footer className="post-actions">
-        <Reactions postId={post.id} />
+        <div className="post-actions-row">
+          <Reactions postId={post.id} />
+          <div className="post-tools">
+            {user && !isOwner && (
+              <button
+                type="button"
+                className="icon-button"
+                title={reported ? t.post.reported : t.post.report}
+                aria-label={t.post.report}
+                onClick={handleReport}
+                disabled={reported}
+              >
+                {reported ? "✓" : "🚩"}
+              </button>
+            )}
+            {(isOwner || isAdmin) && (
+              <button
+                type="button"
+                className="icon-button"
+                title={t.post.delete}
+                aria-label={t.post.delete}
+                onClick={handleDelete}
+              >
+                🗑️
+              </button>
+            )}
+          </div>
+        </div>
         <Comments postId={post.id} />
       </footer>
     </article>

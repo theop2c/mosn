@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useAuth } from "../context/AuthContext";
+import { EmojiPicker } from "../components/EmojiPicker";
 import type { DirectMessage, UserProfile } from "../types";
 
 export function Conversation() {
@@ -24,6 +25,22 @@ export function Conversation() {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function insertEmoji(emoji: string) {
+    const el = inputRef.current;
+    if (!el) {
+      setText((current) => current + emoji);
+      return;
+    }
+    const start = el.selectionStart ?? text.length;
+    const end = el.selectionEnd ?? start;
+    setText(text.slice(0, start) + emoji + text.slice(end));
+    requestAnimationFrame(() => {
+      el.focus();
+      el.selectionStart = el.selectionEnd = start + emoji.length;
+    });
+  }
 
   const convId =
     user && otherUid ? [user.uid, otherUid].sort().join("_") : null;
@@ -120,7 +137,9 @@ export function Conversation() {
         <div ref={bottomRef} />
       </div>
       <form className="composer-inline" onSubmit={send}>
+        <EmojiPicker onPick={insertEmoji} />
         <input
+          ref={inputRef}
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder={t.messages.placeholder}

@@ -56,6 +56,8 @@ export const pt: Labels = {
     emptyFollowing:
       "Nenhuma publicação de quem segue. Encontre utilizadores na pesquisa!",
     signInToView: "Entre para ver as publicações.",
+    searchPlaceholder: "Pesquisar: nome, #hashtag ou texto (regex)…",
+    noMatches: "Nenhuma publicação corresponde à pesquisa.",
   },
   composer: {
     publish: "Publicar",

@@ -55,6 +55,8 @@ export const fr = {
     emptyFollowing:
       "Aucun post de vos abonnements. Suivez des utilisateurs via la recherche !",
     signInToView: "Connectez-vous pour voir les posts.",
+    searchPlaceholder: "Rechercher : nom, #hashtag ou texte (regex)…",
+    noMatches: "Aucun post ne correspond à la recherche.",
   },
   composer: {
     publish: "Publier",

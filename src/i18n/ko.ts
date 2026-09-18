@@ -56,6 +56,8 @@ export const ko: Labels = {
     emptyFollowing:
       "팔로우한 사람의 게시물이 없습니다. 검색으로 사용자를 찾아보세요!",
     signInToView: "게시물을 보려면 로그인하세요.",
+    searchPlaceholder: "검색: 이름, #해시태그 또는 텍스트(정규식)…",
+    noMatches: "검색과 일치하는 게시물이 없습니다.",
   },
   composer: {
     publish: "게시",
