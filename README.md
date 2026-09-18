@@ -240,6 +240,7 @@ Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
 | `Bootstrap désactivé` | `ADMIN_EMAIL` / `ADMIN_PASSWORD` absents | Renseignez-les dans les variables Netlify puis redéployez |
 | `auth/unauthorized-domain` (côté site, à la connexion Google) | Domaine Netlify non autorisé dans Firebase Auth | **Authentication → Settings → Domaines autorisés → Ajouter un domaine** (ex. `mosn-dev.netlify.app`) |
 | `auth/operation-not-allowed` (côté site, à la connexion) | Le fournisseur utilisé n'est pas activé (le compte admin, lui, a pu être créé par le SDK admin) | **Authentication → Sign-in method** → activez **E-mail/Mot de passe** (et Google, Anonyme si besoin) |
+| `auth/invalid-credential` avec les identifiants admin | Le compte existait déjà avec un autre mot de passe (`bootstrap-admin` répond `"created":false` et ne modifie pas le mot de passe) | Ouvrez `/api/bootstrap-admin?reset=1` pour forcer le mot de passe à la valeur de `ADMIN_PASSWORD`, ou utilisez « Mot de passe oublié ? » sur la page de connexion |
 
 Après tout changement de variable d'environnement : **Deploys → Trigger
 deploy** (les variables sont figées au moment du build/déploiement).

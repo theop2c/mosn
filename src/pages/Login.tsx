@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  sendPasswordResetEmail,
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -15,7 +16,22 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
   const navigate = useNavigate();
+
+  async function handleForgotPassword() {
+    setError(null);
+    if (!email) {
+      setError("Saisissez d'abord votre email, puis cliquez à nouveau.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Échec de l'envoi");
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -72,6 +88,9 @@ export function Login() {
         />
         <button type="submit">Se connecter</button>
       </form>
+      <button className="link" onClick={handleForgotPassword}>
+        {resetSent ? "Email de réinitialisation envoyé ✓" : "Mot de passe oublié ?"}
+      </button>
       <button className="secondary" onClick={handleGoogle}>
         Continuer avec Google
       </button>
