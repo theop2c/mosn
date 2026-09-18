@@ -14,13 +14,14 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
-import type { UserProfile } from "../types";
+import type { AppSettings, UserProfile } from "../types";
 
 interface AuthState {
   user: User | null;
   profile: UserProfile | null;
   isAdmin: boolean;
   loading: boolean;
+  settings: AppSettings;
 }
 
 const AuthContext = createContext<AuthState>({
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthState>({
   profile: null,
   isAdmin: false,
   loading: true,
+  settings: { imagesEnabled: false },
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -35,6 +37,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState<AppSettings>({
+    imagesEnabled: false,
+  });
+
+  // Paramètres du site (settings/app), modifiables depuis /admin/settings
+  useEffect(() => {
+    return onSnapshot(doc(db, "settings", "app"), (snap) => {
+      setSettings({ imagesEnabled: snap.data()?.imagesEnabled === true });
+    });
+  }, []);
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (u) => {
@@ -71,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, profile, isAdmin, loading }}>
+    <AuthContext.Provider value={{ user, profile, isAdmin, loading, settings }}>
       {children}
     </AuthContext.Provider>
   );

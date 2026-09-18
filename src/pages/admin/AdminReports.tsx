@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
 import {
   collection,
   onSnapshot,
@@ -9,6 +8,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { api } from "../../lib/api";
+import { AdminTabs } from "../../components/AdminTabs";
 import type { Report } from "../../types";
 
 export function AdminReports() {
@@ -41,10 +41,7 @@ export function AdminReports() {
 
   return (
     <div>
-      <nav className="tabs">
-        <NavLink to="/admin/users">Utilisateurs</NavLink>
-        <NavLink to="/admin/reports">Signalements</NavLink>
-      </nav>
+      <AdminTabs />
       <h1>Signalements ouverts</h1>
       {error && <p className="error">{error}</p>}
       {reports.length === 0 && <p>Aucun signalement ouvert. 🎉</p>}

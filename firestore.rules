@@ -161,6 +161,14 @@ service cloud.firestore {
       }
     }
 
+    // ── Paramètres du site ───────────────────────────────────────────
+    // settings/app : { imagesEnabled: bool } — modifiable par les admins
+    // depuis /admin/settings (ou créé par /api/bootstrap-admin).
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // ── Signalements ─────────────────────────────────────────────────
     // Créés via la fonction report-content ; lisibles par les admins.
     match /reports/{reportId} {

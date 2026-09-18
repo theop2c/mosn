@@ -16,7 +16,13 @@ export interface Post {
   authorName: string;
   text: string;
   groupId?: string | null;
+  imageUrl?: string | null;
   createdAt?: Timestamp;
+}
+
+export interface AppSettings {
+  /** Hébergement d'images via Firebase Storage (nécessite le plan Blaze). */
+  imagesEnabled: boolean;
 }
 
 export interface Comment {

@@ -1,29 +1,26 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import {
-  addDoc,
   collection,
   getDocs,
   limit,
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp,
   where,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useAuth } from "../context/AuthContext";
 import { PostCard } from "../components/PostCard";
+import { PostComposer } from "../components/PostComposer";
 import type { Post } from "../types";
 
 type Tab = "all" | "following";
 
 export function Feed() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [tab, setTab] = useState<Tab>("all");
   const [posts, setPosts] = useState<Post[]>([]);
   const [followingIds, setFollowingIds] = useState<string[] | null>(null);
-  const [text, setText] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
   // Liste des personnes que je suis (pour l'onglet Abonnements)
   useEffect(() => {
@@ -65,40 +62,10 @@ export function Feed() {
     });
   }, [tab, followingIds]);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!user || !text.trim()) return;
-    setError(null);
-    try {
-      await addDoc(collection(db, "posts"), {
-        authorId: user.uid,
-        authorName: profile?.displayName ?? user.displayName ?? "Anonyme",
-        text: text.trim(),
-        groupId: null,
-        createdAt: serverTimestamp(),
-      });
-      setText("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de la publication");
-    }
-  }
-
   return (
     <div className="feed">
       {user ? (
-        <form className="card composer" onSubmit={handleSubmit}>
-          <textarea
-            placeholder="Quoi de neuf ?"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={2000}
-            rows={3}
-          />
-          <button type="submit" disabled={!text.trim()}>
-            Publier
-          </button>
-          {error && <p className="error">{error}</p>}
-        </form>
+        <PostComposer />
       ) : (
         <p className="card">Connectez-vous pour publier.</p>
       )}

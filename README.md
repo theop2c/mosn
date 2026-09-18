@@ -50,9 +50,13 @@ pour une petite communauté).
 - **Messages privés** (DM) : conversations temps réel entre deux
   utilisateurs, liste des conversations triée par activité
 - Signalement de contenus (`/api/report`)
+- **Hébergement d'images optionnel** (Firebase Storage, plan Blaze) :
+  activable par un admin pendant l'installation ou depuis
+  `/admin/settings`, sans redéploiement — images jointes aux posts
 - **Panneau d'admin** (`/admin`) : liste des comptes, promotion/rétrogradation
   d'admins (custom claims), bannissement (compte désactivé + sessions
-  révoquées), modération des signalements, suppression de posts
+  révoquées), modération des signalements, suppression de posts, paramètres
+  du site (hébergement d'images)
 - Règles Firestore verrouillées : les champs sensibles (`role`, `banned`) et
   les signalements ne sont modifiables que côté serveur
 
@@ -80,30 +84,43 @@ pour une petite communauté).
 
 ## Installation
 
-### 0. Prérequis Google Cloud : activer l'API Firestore
+### 1. Prérequis — préparer le projet Firebase (plan Spark, gratuit)
 
-Les Netlify Functions parlent à Firestore via `firebase-admin`, qui passe
-par l'API Google Cloud. Il faut donc que la **Google Cloud Firestore API**
-soit activée pour votre projet, sinon les fonctions échoueront avec une
-erreur `PERMISSION_DENIED` :
+Tout se fait dans la console Firebase, **sans aucune ligne de commande**.
+Dans l'ordre :
 
-1. Ouvrez [console.cloud.google.com](https://console.cloud.google.com) et
-   sélectionnez le **même projet** que votre projet Firebase (ils sont
-   liés : un projet Firebase *est* un projet Google Cloud).
-2. **API et services → Bibliothèque**, recherchez
-   **« Cloud Firestore API »** et cliquez sur **Activer**.
-   (Lien direct : `https://console.cloud.google.com/apis/library/firestore.googleapis.com`.)
+1. **Créer le projet Firebase** :
+   [console.firebase.google.com](https://console.firebase.google.com) →
+   **Ajouter un projet**.
+2. **Créer une app Web** : ⚙️ **Paramètres du projet → Vos applications →
+   bouton `</>` (Web)**. C'est cette app qui fournit le bloc
+   `const firebaseConfig = { … }` que l'assistant d'installation vous
+   demandera de coller tel quel.
+3. **Créer la base de données Firestore** : **Build → Firestore Database →
+   Créer une base de données** (mode production). ⚠️ Étape obligatoire :
+   sans base, les fonctions `/api/*` renvoient l'erreur `5 NOT_FOUND`.
 
-En général, créer la base Firestore depuis la console Firebase l'active
-automatiquement — mais si vos fonctions renvoient une erreur d'API
-désactivée, c'est ici que ça se règle.
-
-### 1. Firebase (plan Spark)
-
-1. Créez un projet sur [console.firebase.google.com](https://console.firebase.google.com).
-2. **Authentication** → activez *Email/Mot de passe* et *Google*.
-3. **Firestore Database** → créez la base (mode production).
-4. Mettez en place les règles de sécurité — deux options :
+   > **Prérequis Google Cloud associé** : les Netlify Functions passent par
+   > la **Cloud Firestore API** de Google Cloud. Créer la base depuis la
+   > console Firebase l'active normalement tout seul ; si vos fonctions
+   > renvoient `PERMISSION_DENIED`, activez-la manuellement sur
+   > [console.cloud.google.com](https://console.cloud.google.com/apis/library/firestore.googleapis.com)
+   > (même projet que Firebase — un projet Firebase *est* un projet Google
+   > Cloud) : **API et services → Bibliothèque → « Cloud Firestore API » →
+   > Activer**.
+4. **Activer les fournisseurs d'authentification** : **Build →
+   Authentication → Méthodes de connexion** :
+   - **E-mail/Mot de passe** — obligatoire (inscriptions + compte admin) ;
+   - **Google** — connexion en un clic ;
+   - **Anonyme** — recommandé pour les environnements `dev`/`test` : la
+     page de connexion y affiche un bouton de connexion anonyme.
+5. **Firebase Storage : ne l'activez PAS maintenant.** L'hébergement
+   d'images est optionnel et nécessite le forfait payant **Blaze**. Vous
+   pourrez l'activer **pendant l'installation** (case à cocher de
+   l'assistant) ou **à tout moment après**, depuis le panneau
+   d'administration (`/admin/settings`) — voir
+   [Et les images ?](#et-les-images--firebase-storage).
+6. Mettez en place les règles de sécurité — deux options :
 
    **Option A — sans aucune ligne de commande (recommandé)** : dans la
    console Firebase, ouvrez **Firestore Database → onglet Règles**, puis
@@ -123,10 +140,7 @@ désactivée, c'est ici que ça se règle.
    ```bash
    npx firebase-tools deploy --only firestore
    ```
-5. **Paramètres du projet → Vos applications** : créez une app Web et copiez
-   la config dans les variables `VITE_FIREBASE_*` (l'assistant
-   d'installation le fait pour vous, voir plus bas).
-6. **Récupérez la clé du compte de service** — indispensable pour les
+7. **Récupérez la clé du compte de service** — indispensable pour les
    Netlify Functions (admin, bannissement, modération) :
    1. Console Firebase → ⚙️ **Paramètres du projet** → onglet
       **Comptes de service** ;
@@ -156,6 +170,9 @@ désactivée, c'est ici que ça se règle.
      **connexion anonyme** (pensez à activer le fournisseur « Anonyme »
      dans Firebase Authentication) ;
    - l'**email et le mot de passe de l'administrateur** ;
+   - l'activation ou non de l'**hébergement d'images** (Firebase Storage,
+     plan Blaze requis — laissez décoché si vous n'êtes pas prêt, un admin
+     pourra l'activer plus tard depuis `/admin/settings`) ;
    - le bloc `const firebaseConfig = { … }` **copié-collé tel quel**
      depuis la console Firebase — l'assistant le parse pour vous.
 3. L'assistant génère le fichier `.env` (téléchargement ou copie). Collez
@@ -220,19 +237,35 @@ deploy** (les variables sont figées au moment du build/déploiement).
 
 ## Et les images ? (Firebase Storage)
 
-Le squelette est volontairement **100 % texte** pour rester entièrement
-gratuit. Si vous voulez des avatars et des images dans les posts :
+Par défaut le squelette est **100 % texte** pour rester entièrement
+gratuit. L'**hébergement d'images est intégré mais désactivé** : quand un
+admin l'active, les utilisateurs peuvent joindre une image à leurs posts
+(upload vers Firebase Storage, affichage dans le fil et les groupes).
 
-- **Firebase Storage** est la solution naturelle (même SDK, mêmes règles de
-  sécurité que Firestore), **mais** Google exige désormais le **forfait
-  payant Blaze** (facturation à l'usage) pour activer Storage — il n'est
-  plus inclus dans le plan gratuit Spark. Avec Blaze vous ne payez que la
-  consommation réelle, ce qui reste très faible pour un petit site, mais il
-  faut enregistrer une carte bancaire.
-- Si vous tenez au **zéro paiement**, des alternatives avec un tier gratuit
-  existent : Cloudinary, Supabase Storage, ImgBB… L'upload se fait alors
-  depuis le client ou via une Netlify Function, et vous ne stockez dans
-  Firestore que l'URL de l'image.
+**Pourquoi désactivé par défaut ?** Google exige désormais le **forfait
+payant Blaze** (facturation à l'usage) pour activer Storage — il n'est plus
+inclus dans le plan gratuit Spark. Avec Blaze vous ne payez que la
+consommation réelle (très faible pour un petit site), mais il faut
+enregistrer une carte bancaire.
+
+**Pour l'activer** (pendant l'installation via la case à cocher de
+l'assistant, ou après coup — le réglage vit dans Firestore,
+`settings/app`, et s'applique immédiatement, sans redéploiement) :
+
+1. Console Firebase → passez le projet au **forfait Blaze** (⚙️ en bas à
+   gauche de la console).
+2. **Build → Storage → Commencer** pour créer le bucket.
+3. Onglet **Règles** de Storage : copiez-collez le contenu du fichier
+   [`storage.rules`](storage.rules) du repo → **Publier**.
+4. Dans MOSN : **Admin → Paramètres** (`/admin/settings`) → cochez
+   **Hébergement d'images**. (Si vous l'aviez coché dans l'assistant
+   d'installation, `/api/bootstrap-admin` l'a déjà activé pour vous.)
+
+Vous pouvez le désactiver à tout moment au même endroit. Si vous tenez au
+**zéro paiement**, des alternatives avec un tier gratuit existent
+(Cloudinary, Supabase Storage, ImgBB…) : l'upload se fait alors côté
+client ou via une Netlify Function, et vous ne stockez dans Firestore que
+l'URL de l'image.
 
 ## Modèle de données (Firestore)
 

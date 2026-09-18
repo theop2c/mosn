@@ -50,6 +50,24 @@ const adminPassword = (
   await rl.question("Mot de passe de l'administrateur (6 car. min) : ")
 ).trim();
 
+const imagesAnswer = (
+  await rl.question(
+    "Activer l'hébergement d'images (Firebase Storage, plan Blaze requis) ? (o/N) : ",
+  )
+)
+  .trim()
+  .toLowerCase();
+const imagesEnabled = imagesAnswer === "o" || imagesAnswer === "oui";
+if (imagesEnabled) {
+  console.log(
+    "→ Pensez à passer le projet en Blaze, activer Storage et publier storage.rules.",
+  );
+} else {
+  console.log(
+    "→ Un admin pourra l'activer plus tard depuis /admin/settings, sans redéploiement.",
+  );
+}
+
 console.log(
   "\nCollez la configuration Firebase (le bloc « const firebaseConfig = { … } »)," +
     "\npuis terminez par une ligne vide :\n",
@@ -96,6 +114,10 @@ VITE_FIREBASE_APP_ID=${values.appId}
 # Supprimez ADMIN_PASSWORD une fois l'admin créé.
 ADMIN_EMAIL=${adminEmail}
 ADMIN_PASSWORD=${adminPassword}
+
+# ── Hébergement d'images (Firebase Storage, plan Blaze requis) ─────
+# Valeur initiale du réglage : modifiable ensuite depuis /admin/settings.
+ENABLE_IMAGES=${imagesEnabled}
 
 # ── Netlify Functions (secret serveur, à compléter à la main) ──────
 # Console Firebase → Paramètres → Comptes de service → Générer une clé

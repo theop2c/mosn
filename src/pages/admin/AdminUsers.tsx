@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
 import { api } from "../../lib/api";
+import { AdminTabs } from "../../components/AdminTabs";
 import { useAuth } from "../../context/AuthContext";
 import type { AdminUser } from "../../types";
 
@@ -38,10 +38,7 @@ export function AdminUsers() {
 
   return (
     <div>
-      <nav className="tabs">
-        <NavLink to="/admin/users">Utilisateurs</NavLink>
-        <NavLink to="/admin/reports">Signalements</NavLink>
-      </nav>
+      <AdminTabs />
       <h1>Utilisateurs</h1>
       {error && <p className="error">{error}</p>}
       <table className="table">

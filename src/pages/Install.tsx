@@ -15,6 +15,7 @@ export function Install() {
   const [siteEnv, setSiteEnv] = useState<string>("production");
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
+  const [imagesEnabled, setImagesEnabled] = useState(false);
   const [snippet, setSnippet] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [envFile, setEnvFile] = useState<string | null>(null);
@@ -39,6 +40,7 @@ export function Install() {
         siteEnv,
         adminEmail: adminEmail.trim(),
         adminPassword,
+        imagesEnabled,
         config: values,
       }),
     );
@@ -173,6 +175,26 @@ export function Install() {
             minLength={6}
           />
         </label>
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={imagesEnabled}
+            onChange={(e) => setImagesEnabled(e.target.checked)}
+          />
+          <span>
+            Activer l'<strong>hébergement d'images</strong> (Firebase Storage)
+          </span>
+        </label>
+        {imagesEnabled && (
+          <p className="notice">
+            ⚠️ Firebase Storage nécessite le <strong>forfait payant
+            Blaze</strong> (facturation à l'usage) : passez votre projet en
+            Blaze, activez <strong>Storage</strong> dans la console Firebase
+            et publiez les règles du fichier <code>storage.rules</code>.
+            Pas prêt ? Laissez décoché : un admin pourra l'activer plus tard
+            depuis <code>/admin/settings</code>, sans redéploiement.
+          </p>
+        )}
         <label>
           Configuration Firebase
           <textarea

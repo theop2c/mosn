@@ -190,6 +190,27 @@ button.danger:not(.link) {
   gap: 1rem;
 }
 
+.post-image {
+  max-width: 100%;
+  border-radius: var(--radius);
+  margin-bottom: 0.6rem;
+}
+
+.toggle {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 0.6rem !important;
+  font-weight: 400 !important;
+}
+
+.toggle input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
 .tabs {
   display: flex;
   gap: 1rem;

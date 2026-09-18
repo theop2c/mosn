@@ -44,9 +44,20 @@ export default safe(async (req: Request) => {
   }
 
   await auth.setCustomUserClaims(uid, { admin: true });
-  await adminDb()
+  const db = adminDb();
+  await db
     .doc(`users/${uid}`)
     .set({ displayName: "Admin", role: "admin" }, { merge: true });
+
+  // Paramètres initiaux du site (ex. hébergement d'images choisi dans
+  // l'assistant d'installation). On ne les écrit qu'à la création pour ne
+  // pas écraser un réglage modifié ensuite dans /admin/settings.
+  const settingsRef = db.doc("settings/app");
+  if (!(await settingsRef.get()).exists) {
+    await settingsRef.set({
+      imagesEnabled: process.env.ENABLE_IMAGES === "true",
+    });
+  }
 
   return json(200, {
     ok: true,

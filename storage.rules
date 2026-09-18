@@ -1,0 +1,19 @@
+rules_version = '2';
+
+// Règles Firebase Storage de MOSN (uniquement si l'hébergement d'images
+// est activé — nécessite le forfait Blaze).
+// À publier via la console Firebase : Storage → onglet Règles.
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Images de posts : posts/{uid}/{fichier}
+    match /posts/{uid}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if request.auth != null
+        && (request.auth.uid == uid || request.auth.token.admin == true);
+    }
+  }
+}

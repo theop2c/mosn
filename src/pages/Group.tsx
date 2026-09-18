@@ -1,7 +1,6 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -17,6 +16,7 @@ import {
 import { db } from "../lib/firebase";
 import { useAuth } from "../context/AuthContext";
 import { PostCard } from "../components/PostCard";
+import { PostComposer } from "../components/PostComposer";
 import type { Group as GroupType, JoinRequest, Post } from "../types";
 
 export function Group() {
@@ -28,7 +28,6 @@ export function Group() {
   const [hasRequested, setHasRequested] = useState(false);
   const [requests, setRequests] = useState<JoinRequest[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const isOwner = user != null && group?.ownerId === user.uid;
@@ -137,24 +136,6 @@ export function Group() {
     navigate("/groups");
   }
 
-  async function publish(e: FormEvent) {
-    e.preventDefault();
-    if (!gid || !user || !text.trim()) return;
-    setError(null);
-    try {
-      await addDoc(collection(db, "posts"), {
-        authorId: user.uid,
-        authorName: profile?.displayName ?? user.displayName ?? "Anonyme",
-        text: text.trim(),
-        groupId: gid,
-        createdAt: serverTimestamp(),
-      });
-      setText("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Échec de la publication");
-    }
-  }
-
   return (
     <div>
       <div className="card">
@@ -212,18 +193,10 @@ export function Group() {
       {canView ? (
         <>
           {isMember && (
-            <form className="card composer" onSubmit={publish}>
-              <textarea
-                placeholder={`Publier dans ${group.name}…`}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                maxLength={2000}
-                rows={3}
-              />
-              <button type="submit" disabled={!text.trim()}>
-                Publier
-              </button>
-            </form>
+            <PostComposer
+              groupId={gid ?? null}
+              placeholder={`Publier dans ${group.name}…`}
+            />
           )}
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />

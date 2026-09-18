@@ -1,6 +1,7 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -29,4 +30,8 @@ export const auth: Auth = isConfigured
 export const db: Firestore = isConfigured
   ? getFirestore(app)
   : (undefined as unknown as Firestore);
+// Utilisé seulement si l'hébergement d'images est activé (plan Blaze)
+export const storage: FirebaseStorage = isConfigured
+  ? getStorage(app)
+  : (undefined as unknown as FirebaseStorage);
 export const googleProvider = new GoogleAuthProvider();

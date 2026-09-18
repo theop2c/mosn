@@ -3,6 +3,7 @@ import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import { AdminReports } from "./pages/admin/AdminReports";
+import { AdminSettings } from "./pages/admin/AdminSettings";
 import { AdminUsers } from "./pages/admin/AdminUsers";
 import { Conversation } from "./pages/Conversation";
 import { Feed } from "./pages/Feed";
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/admin" element={<Navigate to="/admin/users" replace />} />
           <Route path="/admin/users" element={<AdminUsers />} />
           <Route path="/admin/reports" element={<AdminReports />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>

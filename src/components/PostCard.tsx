@@ -40,6 +40,9 @@ export function PostCard({ post }: { post: Post }) {
         <time>{date}</time>
       </header>
       <p className="post-text">{post.text}</p>
+      {post.imageUrl && (
+        <img className="post-image" src={post.imageUrl} alt="" loading="lazy" />
+      )}
       <footer className="post-actions">
         {(isOwner || isAdmin) && (
           <button className="link danger" onClick={handleDelete}>
