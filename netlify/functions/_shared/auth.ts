@@ -34,10 +34,17 @@ export function safe(
         });
       }
       if (/\b7 PERMISSION_DENIED\b/.test(message)) {
+        const insufficientIam = /insufficient permissions/i.test(message);
         return json(500, {
-          error:
-            "Firestore répond PERMISSION_DENIED : activez la « Cloud Firestore API » pour ce projet " +
-            "sur https://console.cloud.google.com/apis/library/firestore.googleapis.com puis réessayez.",
+          error: insufficientIam
+            ? "Firestore répond PERMISSION_DENIED (droits insuffisants) : le compte de service utilisé " +
+              "n'a pas accès à ce projet. Vérifiez que FIREBASE_SERVICE_ACCOUNT contient bien la clé du " +
+              "BON projet Firebase (champ project_id du JSON) et qu'elle a été générée depuis la console " +
+              "Firebase → Paramètres → Comptes de service (le compte firebase-adminsdk a déjà les rôles " +
+              "IAM requis). Après correction : Trigger deploy."
+            : "Firestore répond PERMISSION_DENIED : activez la « Cloud Firestore API » pour ce projet " +
+              "sur https://console.cloud.google.com/apis/library/firestore.googleapis.com (sélecteur de " +
+              "projet en haut = votre projet Firebase) puis réessayez.",
           detail: message,
         });
       }

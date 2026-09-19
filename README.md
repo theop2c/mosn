@@ -291,7 +291,8 @@ Les fonctions renvoient leurs erreurs en JSON lisible. Les plus courantes :
 | --- | --- | --- |
 | `FIREBASE_SERVICE_ACCOUNT est absente` / `n'est pas un JSON valide` | La variable ne contient pas le JSON du compte de service | Collez le **contenu complet** du fichier `.json` téléchargé (il commence par `{`), ou sa version base64 |
 | `5 NOT_FOUND` | La base Firestore n'existe pas dans le projet | Console Firebase → **Firestore Database → Créer une base de données**. Si la base a un ID personnalisé (créée hors console Firebase), définissez `FIRESTORE_DATABASE_ID` |
-| `7 PERMISSION_DENIED` | Cloud Firestore API désactivée | Activez-la (voir [Prérequis](#0-prérequis-google-cloud--activer-lapi-firestore)) |
+| `7 PERMISSION_DENIED` (« API has not been used / disabled ») | Cloud Firestore API désactivée | Activez-la sur console.cloud.google.com (sélecteur de projet = votre projet Firebase) |
+| `7 PERMISSION_DENIED` (« Missing or insufficient permissions ») | Le compte de service n'a pas les droits : clé d'un **autre projet** ou compte créé à la main sans rôles | Régénérez la clé depuis la console Firebase du bon projet (Comptes de service) et vérifiez `project_id` dans le JSON, puis Trigger deploy |
 | `Bootstrap désactivé` | `ADMIN_EMAIL` / `ADMIN_PASSWORD` absents | Renseignez-les dans les variables Netlify puis redéployez |
 | `auth/unauthorized-domain` (côté site, à la connexion Google) | Domaine Netlify non autorisé dans Firebase Auth | **Authentication → Settings → Domaines autorisés → Ajouter un domaine** (ex. `mosn-dev.netlify.app`) |
 | `auth/operation-not-allowed` (côté site, à la connexion) | Le fournisseur utilisé n'est pas activé (le compte admin, lui, a pu être créé par le SDK admin) | **Authentication → Sign-in method** → activez **E-mail/Mot de passe** (et Google, Anonyme si besoin) |
